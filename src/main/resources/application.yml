@@ -3,7 +3,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: admin
-    url: jdbc:mysql://localhost:3306/adviser
+    url: jdbc:mysql://localhost:3306/adviser?serverTimezone=CST
     hikari:
       minimum-idle: 10
       maximum-pool-size: 10

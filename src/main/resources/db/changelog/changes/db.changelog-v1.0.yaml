@@ -1,0 +1,384 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-tables
+      author: IM
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: STOCK_ID_PKEY
+                  name: ID
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: CODE_FULL
+                  type: VARCHAR(64)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: CODE
+                  type: VARCHAR(32)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: EXCHANGE
+                  type: VARCHAR(32)
+              - column:
+                  constraints:
+                    nullable: true
+                  name: SECTOR
+                  type: VARCHAR(64)
+              - column:
+                  constraints:
+                    nullable: true
+                  name: INDUSTRY
+                  type: VARCHAR(64)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: NAME
+                  type: VARCHAR(128)
+              - column:
+                  constraints:
+                    nullable: true
+                  name: DATA_UPDATED_DATE
+                  type: TIMESTAMP
+                  defaultValue: NULL
+              - column:
+                  constraints:
+                    nullable: false
+                  name: ACTIVE
+                  type: TINYINT(1)
+                  defaultValue: 1
+              - column:
+                  constraints:
+                    nullable: false
+                  name: CREATED_DATE
+                  type: TIMESTAMP
+                  defaultValue: NOW()
+              - column:
+                  constraints:
+                    nullable: false
+                  name: UPDATED_DATE
+                  type: TIMESTAMP
+                  defaultValue: NOW() ON UPDATE NOW()
+            tableName: STOCK
+        - createIndex:
+            columns:
+              - column:
+                  name:  CODE_FULL
+            indexName:  STOCK_IDX_CODE_FULL
+            tableName:  STOCK
+            unique:  true
+
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: PRICE_DATA_ID_PKEY
+                  name: ID
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: STOCK_CODE_FULL
+                  type: VARCHAR(64)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: DATE
+                  type: DATE
+              - column:
+                  constraints:
+                    nullable: true
+                  name: PRICE_OPEN
+                  type: DECIMAL(10,2)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: PRICE_CLOSE
+                  type: DECIMAL(10,2)
+              - column:
+                  constraints:
+                    nullable: true
+                  name: PRICE_MIN
+                  type: DECIMAL(10,2)
+              - column:
+                  constraints:
+                    nullable: true
+                  name: PRICE_MAX
+                  type: DECIMAL(10,2)
+              - column:
+                  constraints:
+                    nullable: true
+                  name: VOLUME
+                  type: DECIMAL(10,2)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: CREATED_DATE
+                  type: TIMESTAMP
+                  defaultValue: NOW()
+              - column:
+                  constraints:
+                    nullable: false
+                  name: UPDATED_DATE
+                  type: TIMESTAMP
+                  defaultValue: NOW() ON UPDATE NOW()
+            tableName: PRICE_DATA
+        - createIndex:
+            columns:
+              - column:
+                  name:  STOCK_CODE_FULL
+            indexName:  PRICE_DATA_IDX_STOCK_CODE_FULL
+            tableName:  PRICE_DATA
+            unique:  false
+
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: PRICE_ID_PKEY
+                  name: ID
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: STOCK_CODE_FULL
+                  type: VARCHAR(64)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: TYPE
+                  type: VARCHAR(32)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: DATE
+                  type: DATE
+              - column:
+                  constraints:
+                    nullable: false
+                  name: PRICE
+                  type: DECIMAL(10,2)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: PRICE_MIN
+                  type: DECIMAL(10,2)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: PRICE_MAX
+                  type: DECIMAL(10,2)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: CREATED_DATE
+                  type: TIMESTAMP
+                  defaultValue: NOW()
+              - column:
+                  constraints:
+                    nullable: false
+                  name: UPDATED_DATE
+                  type: TIMESTAMP
+                  defaultValue: NOW() ON UPDATE NOW()
+            tableName: PRICE
+        - createIndex:
+            columns:
+              - column:
+                  name:  STOCK_CODE_FULL
+            indexName:  PRICE_IDX_STOCK_CODE_FULL
+            tableName:  PRICE
+            unique:  false
+
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: FINANCIAL_DATA_ID_PKEY
+                  name: ID
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: STOCK_CODE_FULL
+                  type: VARCHAR(64)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: DATE
+                  type: DATE
+              - column:
+                  constraints:
+                    nullable: false
+                  name: JSON_RESPONSE
+                  type: MEDIUMTEXT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: CREATED_DATE
+                  type: TIMESTAMP
+                  defaultValue: NOW()
+              - column:
+                  constraints:
+                    nullable: false
+                  name: UPDATED_DATE
+                  type: TIMESTAMP
+                  defaultValue: NOW() ON UPDATE NOW()
+            tableName: FINANCIAL_DATA
+        - createIndex:
+            columns:
+              - column:
+                  name:  STOCK_CODE_FULL
+            indexName:  FINANCIAL_DATA_IDX_STOCK_CODE_FULL
+            tableName:  FINANCIAL_DATA
+            unique:  false
+
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: FINANCIAL_ID_PKEY
+                  name: ID
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: STOCK_CODE_FULL
+                  type: VARCHAR(64)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: YEAR
+                  type: INT(4)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: ENTERPRIZE_VALUE
+                  type: DECIMAL(17,2)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: EARNINGS
+                  type: DECIMAL(17,2)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: DIVIDENTS_APY
+                  type: DECIMAL(10,2)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: PRICE_MIN_YTD
+                  type: DECIMAL(10,2)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: PRICE_MAX_YTD
+                  type: DECIMAL(10,2)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: CREATED_DATE
+                  type: TIMESTAMP
+                  defaultValue: NOW()
+              - column:
+                  constraints:
+                    nullable: false
+                  name: UPDATED_DATE
+                  type: TIMESTAMP
+                  defaultValue: NOW() ON UPDATE NOW()
+            tableName: FINANCIAL
+        - createIndex:
+            columns:
+              - column:
+                  name:  STOCK_CODE_FULL
+            indexName:  FINANCIAL_IDX_STOCK_CODE_FULL
+            tableName:  FINANCIAL
+            unique:  true
+
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: RATING_ID_PKEY
+                  name: ID
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: STOCK_CODE_FULL
+                  type: VARCHAR(64)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: DATE
+                  type: DATE
+              - column:
+                  constraints:
+                    nullable: false
+                  name: BEAUTY
+                  type: DECIMAL(17,6)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: APY_GROWN
+                  type: DECIMAL(17,6)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: EARNING_VALUE
+                  type: DECIMAL(17,6)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: HIPERBOLIC
+                  type: DECIMAL(17,6)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: DISCOUNT
+                  type: DECIMAL(17,6)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: CREATED_DATE
+                  type: TIMESTAMP
+                  defaultValue: NOW()
+              - column:
+                  constraints:
+                    nullable: false
+                  name: UPDATED_DATE
+                  type: TIMESTAMP
+                  defaultValue: NOW() ON UPDATE NOW()
+            tableName: RATING
+        - createIndex:
+            columns:
+              - column:
+                  name:  STOCK_CODE_FULL
+            indexName:  RATING_IDX_STOCK_CODE_FULL
+            tableName:  RATING
+            unique:  false
+
+
