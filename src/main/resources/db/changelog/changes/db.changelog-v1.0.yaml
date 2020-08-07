@@ -272,7 +272,7 @@ databaseChangeLog:
               - column:
                   constraints:
                     nullable: false
-                  name: ENTERPRIZE_VALUE
+                  name: ENTERPRISE_VALUE
                   type: DECIMAL(17,2)
               - column:
                   constraints:
@@ -282,7 +282,7 @@ databaseChangeLog:
               - column:
                   constraints:
                     nullable: false
-                  name: DIVIDENTS_APY
+                  name: DIVIDENDS_APY
                   type: DECIMAL(10,2)
               - column:
                   constraints:
@@ -353,7 +353,7 @@ databaseChangeLog:
               - column:
                   constraints:
                     nullable: false
-                  name: HIPERBOLIC
+                  name: HYPERBOLIC
                   type: DECIMAL(17,6)
               - column:
                   constraints:
