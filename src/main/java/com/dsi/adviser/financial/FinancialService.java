@@ -1,12 +1,10 @@
 package com.dsi.adviser.financial;
 
-import com.sun.istack.NotNull;
+import com.sun.istack.internal.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -14,17 +12,13 @@ public class FinancialService {
     private final FinancialRepository financialRepository;
 
     public Mono<Financial> findOneByStockCode(@NotNull String stockCode) {
-        return Mono.just(stockCode)
-                .map(financialRepository::findOneByStockCodeFullEquals)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
+        return financialRepository.findOneByStockCodeFullEquals(stockCode)
                 .map(this::toModel);
     }
 
     public Mono<Financial> save(Financial financial) {
-        return Mono.just(financial)
-                .map(this::toEntity)
-                .map(financialRepository::save)
+        return toEntity(financial)
+                .flatMap(financialRepository::save)
                 .map(this::toModel);
     }
 
@@ -34,10 +28,11 @@ public class FinancialService {
         return builder.build();
     }
 
-    private FinancialEntity toEntity(Financial financial) {
-        FinancialEntity entity = financialRepository.findOneByStockCodeFullEquals(financial.getStockCodeFull())
-                .orElseGet(FinancialEntity::new);
-        BeanUtils.copyProperties(financial, entity);
-        return entity;
+    private Mono<FinancialEntity> toEntity(Financial financial) {
+        return financialRepository.findOneByStockCodeFullEquals(financial.getStockCodeFull())
+                .map(FinancialEntity::toBuilder)
+                .switchIfEmpty(Mono.fromCallable(FinancialEntity::builder))
+                .doOnNext( entity -> BeanUtils.copyProperties(financial, entity))
+                .map(FinancialEntity.FinancialEntityBuilder::build);
     }
 }

@@ -1,49 +1,46 @@
 package com.dsi.adviser.stock;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
-import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
-@ToString
-@Entity
-@Table(name = "STOCK")
+@Value
+@Builder(setterPrefix = "set", toBuilder = true)
+@Table("STOCK")
 public class StockEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID")
-    private Long id;
+    @Column("ID")
+    Long id;
 
-    @Column(name = "CODE_FULL")
-    private String codeFull;
+    @Column("CODE_FULL")
+    String codeFull;
 
-    @Column(name = "CODE")
-    private String code;
+    @Column("CODE")
+    String code;
 
-    @Column(name = "EXCHANGE")
-    private String exchange;
+    @Column("EXCHANGE")
+    String exchange;
 
-    @Column(name = "SECTOR")
-    private String sector;
+    @Column("SECTOR")
+    String sector;
 
-    @Column(name = "INDUSTRY")
-    private String industry;
+    @Column("INDUSTRY")
+    String industry;
 
-    @Column(name = "DATA_UPDATED_DATE")
-    private LocalDate dataUpdatedDate;
+    @Column("DATA_UPDATED_DATE")
+    LocalDate dataUpdatedDate;
 
-    @Column(name = "ACTIVE")
-    private Boolean active = true;
+    @Column("ACTIVE")
+    Boolean active = true;
 
-    @Column(name = "CREATED_DATE")
-    private LocalDateTime createdDate;
+    @Column("CREATED_DATE")
+    LocalDateTime createdDate;
 
-    @Column(name = "UPDATED_DATE")
-    private LocalDateTime updatedDate;
+    @Column("UPDATED_DATE")
+    LocalDateTime updatedDate;
 }

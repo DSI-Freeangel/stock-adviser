@@ -1,49 +1,46 @@
 package com.dsi.adviser.integration.priceData;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
-import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
-@ToString
-@Entity
-@Table(name = "PRICE_DATA")
+@Value
+@Builder(setterPrefix = "set", toBuilder = true)
+@Table("PRICE_DATA")
 public class PriceDataEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID")
-    private Long id;
+    @Column("ID")
+    Long id;
 
-    @Column(name = "STOCK_CODE_FULL")
-    private String stockCodeFull;
+    @Column("STOCK_CODE_FULL")
+    String stockCodeFull;
 
-    @Column(name = "DATE")
-    private LocalDate date;
+    @Column("DATE")
+    LocalDate date;
 
-    @Column(name = "PRICE_OPEN")
-    private Double priceOpen;
+    @Column("PRICE_OPEN")
+    Double priceOpen;
 
-    @Column(name = "PRICE_CLOSE")
-    private Double priceClose;
+    @Column("PRICE_CLOSE")
+    Double priceClose;
 
-    @Column(name = "PRICE_MIN")
-    private Double priceMin;
+    @Column("PRICE_MIN")
+    Double priceMin;
 
-    @Column(name = "PRICE_MAX")
-    private Double priceMax;
+    @Column("PRICE_MAX")
+    Double priceMax;
 
-    @Column(name = "VOLUME")
-    private Double volume;
+    @Column("VOLUME")
+    Double volume;
 
-    @Column(name = "CREATED_DATE")
-    private LocalDateTime createdDate;
+    @Column("CREATED_DATE")
+    LocalDateTime createdDate;
 
-    @Column(name = "UPDATED_DATE")
-    private LocalDateTime updatedDate;
+    @Column("UPDATED_DATE")
+    LocalDateTime updatedDate;
 }

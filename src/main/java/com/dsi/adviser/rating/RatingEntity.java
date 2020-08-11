@@ -1,42 +1,39 @@
 package com.dsi.adviser.rating;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
-@ToString
-@Entity
-@Table(name = "PRICE")
+@Value
+@Builder(setterPrefix = "set", toBuilder = true)
+@Table("PRICE")
 public class RatingEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID")
-    private Long id;
+    @Column("ID")
+    Long id;
 
-    @Column(name = "STOCK_CODE_FULL")
-    private String stockCodeFull;
+    @Column("STOCK_CODE_FULL")
+    String stockCodeFull;
 
-    @Column(name = "BEAUTY")
-    private Double beauty;
+    @Column("BEAUTY")
+    Double beauty;
 
-    @Column(name = "APY_GROWN")
-    private Double apyGrown;
+    @Column("APY_GROWN")
+    Double apyGrown;
 
-    @Column(name = "EARNING_VALUE")
-    private Double earningValue;
+    @Column("EARNING_VALUE")
+    Double earningValue;
 
-    @Column(name = "HYPERBOLIC")
-    private Double hyperbolic;
+    @Column("HYPERBOLIC")
+    Double hyperbolic;
 
-    @Column(name = "CREATED_DATE")
-    private LocalDateTime createdDate;
+    @Column("CREATED_DATE")
+    LocalDateTime createdDate;
 
-    @Column(name = "UPDATED_DATE")
-    private LocalDateTime updatedDate;
+    @Column("UPDATED_DATE")
+    LocalDateTime updatedDate;
 }

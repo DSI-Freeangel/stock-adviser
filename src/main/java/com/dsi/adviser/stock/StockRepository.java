@@ -1,13 +1,12 @@
 package com.dsi.adviser.stock;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
+import reactor.core.publisher.Mono;
 
 @Repository
 @Transactional
-public interface StockRepository extends JpaRepository<StockEntity, Long> {
-    Optional<StockEntity> findOneByCodeFullEquals(String stockCodeFull);
+public interface StockRepository extends ReactiveCrudRepository<StockEntity, Long> {
+    Mono<StockEntity> findOneByCodeFullEquals(String stockCodeFull);
 }

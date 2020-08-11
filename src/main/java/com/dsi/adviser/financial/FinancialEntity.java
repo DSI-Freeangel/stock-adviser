@@ -1,48 +1,45 @@
 package com.dsi.adviser.financial;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Builder;
+import lombok.Value;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
-@ToString
-@Entity
-@Table(name = "FINANCIAL")
+@Value
+@Builder(setterPrefix = "set", toBuilder = true)
+@Table("FINANCIAL")
 public class FinancialEntity {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID")
-    private Long id;
+    @Column("ID")
+    Long id;
 
-    @Column(name = "STOCK_CODE_FULL")
-    private String stockCodeFull;
+    @Column("STOCK_CODE_FULL")
+    String stockCodeFull;
 
-    @Column(name = "YEAR")
-    private Integer year;
+    @Column("YEAR")
+    Integer year;
 
-    @Column(name = "ENTERPRISE_VALUE")
-    private Double enterpriseValue;
+    @Column("ENTERPRISE_VALUE")
+    Double enterpriseValue;
 
-    @Column(name = "EARNINGS")
-    private Double earnings;
+    @Column("EARNINGS")
+    Double earnings;
 
-    @Column(name = "DIVIDENDS_APY")
-    private Double dividendsApy;
+    @Column("DIVIDENDS_APY")
+    Double dividendsApy;
 
-    @Column(name = "PRICE_MIN_YTD")
-    private Double priceMinYtd;
+    @Column("PRICE_MIN_YTD")
+    Double priceMinYtd;
 
-    @Column(name = "PRICE_MAX_YTD")
-    private Double priceMaxYtd;
+    @Column("PRICE_MAX_YTD")
+    Double priceMaxYtd;
 
-    @Column(name = "CREATED_DATE")
-    private LocalDateTime createdDate;
+    @Column("CREATED_DATE")
+    LocalDateTime createdDate;
 
-    @Column(name = "UPDATED_DATE")
-    private LocalDateTime updatedDate;
+    @Column("UPDATED_DATE")
+    LocalDateTime updatedDate;
 }

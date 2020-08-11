@@ -1,46 +1,42 @@
 package com.dsi.adviser.price;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
-import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
-@ToString
-@Entity
-@Table(name = "PRICE")
+@Value
+@Builder(setterPrefix = "set", toBuilder = true)
+@Table("PRICE")
 public class PriceEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID")
-    private Long id;
+    @Column("ID")
+    Long id;
 
-    @Column(name = "STOCK_CODE_FULL")
-    private String stockCodeFull;
+    @Column("STOCK_CODE_FULL")
+    String stockCodeFull;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "TYPE")
-    private Period type;
+    @Column("TYPE")
+    Period type;
 
-    @Column(name = "DATE")
-    private LocalDate date;
+    @Column("DATE")
+    LocalDate date;
 
-    @Column(name = "PRICE")
-    private Double price;
+    @Column("PRICE")
+    Double price;
 
-    @Column(name = "PRICE_MIN")
-    private Double priceMin;
+    @Column("PRICE_MIN")
+    Double priceMin;
 
-    @Column(name = "PRICE_MAX")
-    private Double priceMax;
+    @Column("PRICE_MAX")
+    Double priceMax;
 
-    @Column(name = "CREATED_DATE")
-    private LocalDateTime createdDate;
+    @Column("CREATED_DATE")
+    LocalDateTime createdDate;
 
-    @Column(name = "UPDATED_DATE")
-    private LocalDateTime updatedDate;
+    @Column("UPDATED_DATE")
+    LocalDateTime updatedDate;
 }

@@ -1,16 +1,16 @@
 spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
+  r2dbc:
     username: root
     password: admin
-    url: jdbc:mysql://localhost:3306/adviser?serverTimezone=CST
-    hikari:
-      minimum-idle: 10
-      maximum-pool-size: 10
-      idle-timeout: 10000
-      max-lifetime: 10000
+    url: r2dbc:mysql://localhost:3306/adviser?serverTimezone=CST
+    pool:
+      enabled: true
+      initial-size: 10
+      max-size: 10
+      max-idle-time: 30m
   jpa:
     open-in-view: false
-    hibernate:
-      naming:
-        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+  liquibase:
+    url: jdbc:mysql://localhost:3306/adviser?serverTimezone=CST
+    user: root
+    password: admin

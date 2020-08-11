@@ -20,21 +20,23 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
-    implementation 'mysql:mysql-connector-java:8.0.21'
+    implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
+    implementation 'dev.miku:r2dbc-mysql'
+    
+    //Liquibase with own jdbc data source and driver
     implementation 'org.liquibase:liquibase-core:4.0.0'
+    implementation 'org.springframework:spring-jdbc'
+    implementation 'mysql:mysql-connector-java'
 
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.projectlombok:lombok'
 
-    testImplementation('org.springframework.boot:spring-boot-starter-test') {
-        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-    }
+    testImplementation'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.projectreactor:reactor-test'
-    testImplementation "com.h2database:h2:1.4.200"
+    testImplementation 'io.r2dbc:r2dbc-h2'
 }
 
 test {
