@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 @Value
 @Builder(setterPrefix = "set")
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Financial {
+public class FinancialModel implements FinancialData {
     String stockCodeFull;
     Integer year;
     Double enterpriseValue;

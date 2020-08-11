@@ -23,6 +23,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
     implementation 'dev.miku:r2dbc-mysql'
+    implementation 'org.hibernate.validator:hibernate-validator'
     
     //Liquibase with own jdbc data source and driver
     implementation 'org.liquibase:liquibase-core:4.0.0'

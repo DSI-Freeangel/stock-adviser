@@ -23,6 +23,9 @@ public class FinancialDataEntity {
     @Column("DATE")
     LocalDate date;
 
+    @Column("SOURCE")
+    Source source;
+
     @Column("JSON_RESPONSE")
     String jsonResponse;
 

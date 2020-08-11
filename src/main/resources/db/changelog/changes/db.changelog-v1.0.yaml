@@ -221,6 +221,11 @@ databaseChangeLog:
               - column:
                   constraints:
                     nullable: false
+                  name: SOURCE
+                  type: VARCHAR(32)
+              - column:
+                  constraints:
+                    nullable: false
                   name: DATE
                   type: DATE
               - column:

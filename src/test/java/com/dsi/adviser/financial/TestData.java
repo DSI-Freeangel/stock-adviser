@@ -19,7 +19,7 @@ class TestData {
             .setPriceMaxYtd(PRICE_MAX_YTD)
             .build();
 
-    static final Financial FINANCIAL_MODEL = Financial.builder()
+    static final FinancialModel FINANCIAL_MODEL = FinancialModel.builder()
             .setStockCodeFull(STOCK_CODE_FULL)
             .setYear(YEAR)
             .setEnterpriseValue(ENTERPRISE_VALUE)

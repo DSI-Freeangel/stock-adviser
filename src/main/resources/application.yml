@@ -14,3 +14,10 @@ spring:
     url: jdbc:mysql://localhost:3306/adviser?serverTimezone=CST
     user: root
     password: admin
+
+app:
+  integration:
+    alphavantage:
+      enabled: true
+      url: https://www.alphavantage.co/
+      apiKey: 86T2JAZAYN5Q24FS
