@@ -43,7 +43,7 @@ public class FinancialRepositoryTest {
         StepVerifier.create(saved)
                 .expectNextMatches(result -> result.getId() != null
                         && result.getStockCodeFull().equals(STOCK_CODE_FULL)
-                        && result.getYear().equals(YEAR)
+                        && result.getDate().equals(DATE)
                         && result.getEnterpriseValue().equals(ENTERPRISE_VALUE)
                         && result.getEarnings().equals(EARNINGS)
                         && result.getDividendsApy().equals(DIVIDENDS_APY)

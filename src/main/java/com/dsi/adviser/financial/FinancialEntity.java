@@ -6,6 +6,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Value
@@ -19,8 +20,8 @@ public class FinancialEntity {
     @Column("STOCK_CODE_FULL")
     String stockCodeFull;
 
-    @Column("YEAR")
-    Integer year;
+    @Column("DATE")
+    LocalDate date;
 
     @Column("ENTERPRISE_VALUE")
     Double enterpriseValue;

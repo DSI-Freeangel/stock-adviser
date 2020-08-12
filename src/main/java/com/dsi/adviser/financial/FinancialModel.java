@@ -2,6 +2,7 @@ package com.dsi.adviser.financial;
 
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Value
@@ -9,7 +10,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class FinancialModel implements FinancialData {
     String stockCodeFull;
-    Integer year;
+    LocalDate date;
     Double enterpriseValue;
     Double earnings;
     Double dividendsApy;

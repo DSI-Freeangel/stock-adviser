@@ -60,7 +60,7 @@ public class FinancialServiceTest {
         StepVerifier.create(model)
                 .expectNextMatches(result ->
                         result.getStockCodeFull().equals(STOCK_CODE_FULL)
-                        && result.getYear().equals(YEAR)
+                        && result.getDate().equals(DATE)
                         && result.getEnterpriseValue().equals(ENTERPRISE_VALUE)
                         && result.getEarnings().equals(EARNINGS)
                         && result.getDividendsApy().equals(DIVIDENDS_APY)

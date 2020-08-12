@@ -272,8 +272,8 @@ databaseChangeLog:
               - column:
                   constraints:
                     nullable: false
-                  name: YEAR
-                  type: INT(4)
+                  name: DATE
+                  type: DATE
               - column:
                   constraints:
                     nullable: false

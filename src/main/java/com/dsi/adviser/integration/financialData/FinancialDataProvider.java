@@ -5,6 +5,4 @@ import reactor.core.publisher.Mono;
 
 public interface FinancialDataProvider {
     Mono<FinancialData> getFinancialData(String stockCodeFull);
-
-    Mono<Void> updateFinancialData(String stockCodeFull);
 }

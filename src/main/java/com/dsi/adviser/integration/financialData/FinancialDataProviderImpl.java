@@ -4,6 +4,9 @@ import com.dsi.adviser.financial.FinancialData;
 import com.dsi.adviser.financial.FinancialModel;
 import com.dsi.adviser.integration.client.FinancialDataItem;
 import com.dsi.adviser.integration.client.FinancialDataSource;
+import com.dsi.adviser.integration.financialData.parser.FinancialDataParser;
+import com.dsi.adviser.integration.financialData.parser.FinancialParserProvider;
+import com.dsi.adviser.integration.financialData.parser.RawFinancialData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -17,6 +20,7 @@ import java.time.temporal.ChronoUnit;
 public class FinancialDataProviderImpl implements FinancialDataProvider {
     private final FinancialDataSource dataSource;
     private final FinancialDataRepository financialDataRepository;
+    private final FinancialParserProvider financialParserProvider;
 
     @Override
     public Mono<FinancialData> getFinancialData(String stockCodeFull) {
@@ -24,11 +28,6 @@ public class FinancialDataProviderImpl implements FinancialDataProvider {
         return existing.filter(financialDataEntity -> ChronoUnit.DAYS.between(financialDataEntity.getDate(), LocalDate.now()) < 30)
                 .switchIfEmpty(this.loadActualData(stockCodeFull, existing))
                 .map(this::toFinancialData);
-    }
-
-    @Override
-    public Mono<Void> updateFinancialData(String stockCodeFull) {
-        return null;
     }
 
     private Mono<FinancialDataEntity> loadActualData(String stockCodeFull, Mono<FinancialDataEntity> existing) {
@@ -53,9 +52,10 @@ public class FinancialDataProviderImpl implements FinancialDataProvider {
         FinancialModel.FinancialModelBuilder builder = FinancialModel.builder()
                 .setStockCodeFull(financialDataEntity.getStockCodeFull());
         Source source = financialDataEntity.getSource();
-        //TODO: Continue....
+        FinancialDataParser parser = financialParserProvider.getParser(source);
+        RawFinancialData financialData = parser.parse(financialDataEntity.getJsonResponse());
+        BeanUtils.copyProperties(financialData, builder);
         return builder.build();
     }
-
 
 }
