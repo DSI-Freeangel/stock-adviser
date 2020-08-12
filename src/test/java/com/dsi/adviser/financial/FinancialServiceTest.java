@@ -17,14 +17,14 @@ public class FinancialServiceTest {
     @Test
     public void testDataReceived() {
         givenEntityExistsInRepository();
-        Mono<FinancialModel> model = financialService.findOneByStockCode(STOCK_CODE_FULL);
+        Mono<FinancialData> model = financialService.findOneByStockCode(STOCK_CODE_FULL);
         verifyModel(model);
     }
 
     @Test
     public void testNoDataReceivedIfNotPresent() {
         givenEntityIsNotPresentInRepository();
-        Mono<FinancialModel> model = financialService.findOneByStockCode(STOCK_CODE_FULL);
+        Mono<FinancialData> model = financialService.findOneByStockCode(STOCK_CODE_FULL);
         verifyEmpty(model);
     }
 
@@ -32,7 +32,7 @@ public class FinancialServiceTest {
     public void testDataSaved() {
         givenEntityIsNotPresentInRepository();
         givenEntitySavingWorks();
-        Mono<FinancialModel> model = financialService.save(FINANCIAL_MODEL);
+        Mono<FinancialData> model = financialService.save(FINANCIAL_MODEL);
         verifyModel(model);
     }
 
@@ -40,7 +40,7 @@ public class FinancialServiceTest {
     public void testDataUpdated() {
         givenEntityExistsInRepository();
         givenEntitySavingWorks();
-        Mono<FinancialModel> model = financialService.save(FINANCIAL_MODEL);
+        Mono<FinancialData> model = financialService.save(FINANCIAL_MODEL);
         verifyModel(model);
     }
 
@@ -56,7 +56,7 @@ public class FinancialServiceTest {
         when(financialRepository.findOneByStockCodeFullEquals(eq(STOCK_CODE_FULL))).thenReturn(Mono.empty());
     }
 
-    private void verifyModel(Mono<FinancialModel> model) {
+    private void verifyModel(Mono<FinancialData> model) {
         StepVerifier.create(model)
                 .expectNextMatches(result ->
                         result.getStockCodeFull().equals(STOCK_CODE_FULL)
@@ -69,7 +69,7 @@ public class FinancialServiceTest {
                 .verifyComplete();
     }
 
-    private void verifyEmpty(Mono<FinancialModel> model) {
+    private void verifyEmpty(Mono<FinancialData> model) {
         StepVerifier.create(model)
                 .expectNextCount(0)
                 .verifyComplete();

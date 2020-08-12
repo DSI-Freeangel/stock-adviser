@@ -11,24 +11,24 @@ import reactor.core.publisher.Mono;
 public class FinancialService {
     private final FinancialRepository financialRepository;
 
-    public Mono<FinancialModel> findOneByStockCode(@NotNull String stockCode) {
+    public Mono<FinancialData> findOneByStockCode(@NotNull String stockCode) {
         return financialRepository.findOneByStockCodeFullEquals(stockCode)
                 .map(this::toModel);
     }
 
-    public Mono<FinancialModel> save(FinancialModel financial) {
+    public Mono<FinancialData> save(FinancialData financial) {
         return toEntity(financial)
                 .flatMap(financialRepository::save)
                 .map(this::toModel);
     }
 
-    private FinancialModel toModel(FinancialEntity financialEntity) {
+    private FinancialData toModel(FinancialEntity financialEntity) {
         FinancialModel.FinancialModelBuilder builder = FinancialModel.builder();
         BeanUtils.copyProperties(financialEntity, builder);
         return builder.build();
     }
 
-    private Mono<FinancialEntity> toEntity(FinancialModel financial) {
+    private Mono<FinancialEntity> toEntity(FinancialData financial) {
         return financialRepository.findOneByStockCodeFullEquals(financial.getStockCodeFull())
                 .map(FinancialEntity::toBuilder)
                 .switchIfEmpty(Mono.fromCallable(FinancialEntity::builder))

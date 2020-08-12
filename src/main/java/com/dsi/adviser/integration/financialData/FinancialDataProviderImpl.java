@@ -25,6 +25,7 @@ public class FinancialDataProviderImpl implements FinancialDataProvider {
     @Override
     public Mono<FinancialData> getFinancialData(String stockCodeFull) {
         Mono<FinancialDataEntity> existing = financialDataRepository.findOneByStockCodeFullEquals(stockCodeFull).cache();
+        //TODO: Move constant to application configurations
         return existing.filter(financialDataEntity -> ChronoUnit.DAYS.between(financialDataEntity.getDate(), LocalDate.now()) < 30)
                 .switchIfEmpty(this.loadActualData(stockCodeFull, existing))
                 .map(this::toFinancialData);

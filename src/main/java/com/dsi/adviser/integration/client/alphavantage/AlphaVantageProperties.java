@@ -15,7 +15,7 @@ import javax.validation.constraints.NotBlank;
 @Component
 @NoArgsConstructor
 @AllArgsConstructor
-@ConfigurationProperties(prefix = "app.integration", value = "alphavantage")
+@ConfigurationProperties("app.integration.alphavantage")
 @ConditionalOnProperty(prefix = "app.integration.alphavantage", name = "enabled")
 public class AlphaVantageProperties {
     @NotBlank

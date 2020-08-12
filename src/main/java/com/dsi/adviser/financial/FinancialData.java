@@ -1,23 +1,16 @@
 package com.dsi.adviser.financial;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public interface FinancialData {
     String getStockCodeFull();
-
     LocalDate getDate();
-
     Double getEnterpriseValue();
-
     Double getEarnings();
-
     Double getDividendsApy();
-
     Double getPriceMinYtd();
-
     Double getPriceMaxYtd();
-
-    java.time.LocalDateTime getCreatedDate();
-
-    java.time.LocalDateTime getUpdatedDate();
+    LocalDateTime getCreatedDate();
+    LocalDateTime getUpdatedDate();
 }
