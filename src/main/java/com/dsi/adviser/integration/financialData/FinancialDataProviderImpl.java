@@ -1,7 +1,5 @@
 package com.dsi.adviser.integration.financialData;
 
-import com.dsi.adviser.financial.FinancialData;
-import com.dsi.adviser.financial.FinancialModel;
 import com.dsi.adviser.integration.client.FinancialDataItem;
 import com.dsi.adviser.integration.client.FinancialDataSource;
 import com.dsi.adviser.integration.financialData.parser.FinancialDataParser;
@@ -23,10 +21,11 @@ public class FinancialDataProviderImpl implements FinancialDataProvider {
     private final FinancialParserProvider financialParserProvider;
 
     @Override
-    public Mono<FinancialData> getFinancialData(String stockCodeFull) {
+    public Mono<StockOverviewData> getFinancialData(String stockCodeFull) {
         Mono<FinancialDataEntity> existing = financialDataRepository.findOneByStockCodeFullEquals(stockCodeFull).cache();
         //TODO: Move constant to application configurations
-        return existing.filter(financialDataEntity -> ChronoUnit.DAYS.between(financialDataEntity.getDate(), LocalDate.now()) < 30)
+        return existing
+                .filter(financialDataEntity -> ChronoUnit.DAYS.between(financialDataEntity.getDate(), LocalDate.now()) < 30)
                 .switchIfEmpty(this.loadActualData(stockCodeFull, existing))
                 .map(this::toFinancialData);
     }
@@ -49,8 +48,8 @@ public class FinancialDataProviderImpl implements FinancialDataProvider {
         return entityBuilder.build();
     }
 
-    private FinancialData toFinancialData(FinancialDataEntity financialDataEntity) {
-        FinancialModel.FinancialModelBuilder builder = FinancialModel.builder()
+    private StockOverviewData toFinancialData(FinancialDataEntity financialDataEntity) {
+        StockOverviewModel.StockOverviewModelBuilder builder = StockOverviewModel.builder()
                 .setStockCodeFull(financialDataEntity.getStockCodeFull());
         Source source = financialDataEntity.getSource();
         FinancialDataParser parser = financialParserProvider.getParser(source);

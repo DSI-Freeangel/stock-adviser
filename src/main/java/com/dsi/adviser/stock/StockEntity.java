@@ -26,6 +26,9 @@ public class StockEntity {
     @Column("EXCHANGE")
     String exchange;
 
+    @Column("NAME")
+    String name;
+
     @Column("SECTOR")
     String sector;
 

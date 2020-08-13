@@ -29,4 +29,10 @@ public class AlphavantageFinancialData implements RawFinancialData {
     Double priceMinYtd;
     @JsonProperty("52WeekHigh")
     Double priceMaxYtd;
+    @JsonProperty("Name")
+    String name;
+    @JsonProperty("Sector")
+    String sector;
+    @JsonProperty("Industry")
+    String industry;
 }

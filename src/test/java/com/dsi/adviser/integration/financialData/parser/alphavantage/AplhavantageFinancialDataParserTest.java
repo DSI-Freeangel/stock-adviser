@@ -32,5 +32,8 @@ class AplhavantageFinancialDataParserTest {
         assertEquals(0.0522, result.getDividendsApy(), 0.0001);
         assertEquals(90.56, result.getPriceMinYtd(), 0.0001);
         assertEquals(158.75, result.getPriceMaxYtd(), 0.0001);
+        assertEquals("International Business Machines Corporation", result.getName());
+        assertEquals("Information Technology Services", result.getIndustry());
+        assertEquals("Technology", result.getSector());
     }
 }

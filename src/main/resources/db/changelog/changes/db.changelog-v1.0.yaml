@@ -40,7 +40,7 @@ databaseChangeLog:
                   type: VARCHAR(64)
               - column:
                   constraints:
-                    nullable: false
+                    nullable: true
                   name: NAME
                   type: VARCHAR(128)
               - column:

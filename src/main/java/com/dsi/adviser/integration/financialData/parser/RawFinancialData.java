@@ -14,4 +14,10 @@ public interface RawFinancialData {
     Double getPriceMinYtd();
 
     Double getPriceMaxYtd();
+
+    String getName();
+
+    String getSector();
+
+    String getIndustry();
 }
