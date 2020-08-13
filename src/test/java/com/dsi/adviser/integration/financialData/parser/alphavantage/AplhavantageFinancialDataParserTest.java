@@ -2,7 +2,7 @@ package com.dsi.adviser.integration.financialData.parser.alphavantage;
 
 import com.dsi.adviser.integration.financialData.parser.RawFinancialData;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import java.nio.file.Files;
