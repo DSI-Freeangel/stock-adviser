@@ -6,10 +6,10 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("test")
-class AdviserApplicationTests {
+public class AdviserApplicationTests {
 
     @Test
-    void contextLoads() {
+    public void testContextLoads() {
     }
 
 }

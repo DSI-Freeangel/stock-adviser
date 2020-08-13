@@ -11,7 +11,7 @@ import java.time.LocalDate;
 
 import static org.junit.Assert.assertEquals;
 
-class AplhavantageFinancialDataParserTest {
+public class AplhavantageFinancialDataParserTest {
 
     private final String PAYLOAD;
     private final AplhavantageFinancialDataParser parser = new AplhavantageFinancialDataParser(Jackson2ObjectMapperBuilder.json()
@@ -24,7 +24,7 @@ class AplhavantageFinancialDataParserTest {
     }
 
     @Test
-    void parsePayload() {
+    public void parsePayload() {
         RawFinancialData result = parser.parse(PAYLOAD);
         assertEquals(LocalDate.of(2020,6,30), result.getDate());
         assertEquals(15576999936L * 11.18, result.getEnterpriseValue(), 0.0001);
