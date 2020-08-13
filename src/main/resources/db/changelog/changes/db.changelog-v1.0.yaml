@@ -138,9 +138,11 @@ databaseChangeLog:
             columns:
               - column:
                   name:  STOCK_CODE_FULL
+              - column:
+                  name:  DATE
             indexName:  PRICE_DATA_IDX_STOCK_CODE_FULL
             tableName:  PRICE_DATA
-            unique:  false
+            unique:  true
 
         - createTable:
             columns:

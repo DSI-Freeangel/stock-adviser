@@ -25,7 +25,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 @RequiredArgsConstructor
 @ConditionalOnBean({AlphaVantageProperties.class})
 public class AlphaVantageClient implements PriceHistorySource, FinancialDataSource {
-    public static final int SHORT_PERIOD = 100;
+    private static final int SHORT_PERIOD = 100;
     private final AVWebClientFactory webClientFactory;
     private WebClient webClient;
 

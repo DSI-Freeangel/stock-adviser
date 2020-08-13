@@ -33,8 +33,12 @@ public class PriceDataProviderImpl implements PriceDataProvider {
     private Flux<PriceDataEntity> selectFlow(String stockCodeFull, LocalDate lastDate, LocalDate fromDate) {
         //TODO: Move constant to application configurations
         if(ChronoUnit.DAYS.between(lastDate, LocalDate.now()) > 30) {
+            Flux<PriceDataEntity> dataFromSource = updateAndReturnData(stockCodeFull, lastDate);
+            if(null != fromDate) {
+                dataFromSource = dataFromSource.filter(priceDataEntity -> priceDataEntity.getDate().isAfter(fromDate));
+            }
             return loadDataFromDB(stockCodeFull, fromDate)
-                    .concatWith(updateAndReturnData(stockCodeFull, lastDate));
+                    .concatWith(dataFromSource);
         }
         return loadDataFromDB(stockCodeFull, fromDate);
     }
@@ -49,19 +53,19 @@ public class PriceDataProviderImpl implements PriceDataProvider {
     private Flux<PriceDataEntity> updateAndReturnData(String stockCodeFull, LocalDate fromDate) {
         return priceHistorySource.getPriceHistory(stockCodeFull, fromDate)
                 .filter(priceDataItem -> priceDataItem.getDate().isAfter(fromDate))
-                .map(this::toEntity)
+                .map(priceDataItem -> toEntity(priceDataItem, stockCodeFull))
                 .window(1000)
                 .flatMap(this::saveAll);
     }
 
     private Flux<PriceDataEntity> saveAll(Flux<PriceDataEntity> priceDataEntityFlux) {
-        return priceDataEntityFlux.collectList().flatMapMany(priceDataRepository::saveAll);
+        return priceDataRepository.saveAll(priceDataEntityFlux);
     }
 
-    private PriceDataEntity toEntity(PriceDataItem priceDataItem) {
+    private PriceDataEntity toEntity(PriceDataItem priceDataItem, String stockCodeFull) {
         PriceDataEntity.PriceDataEntityBuilder builder = PriceDataEntity.builder();
         BeanUtils.copyProperties(priceDataItem, builder);
-        return builder.build();
+        return builder.setStockCodeFull(stockCodeFull).build();
     }
 
     private PriceData toPriceData(PriceDataEntity priceDataEntity) {
