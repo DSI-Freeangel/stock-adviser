@@ -13,7 +13,7 @@ import java.util.HashMap;
 @ConditionalOnBean({AlphaVantageProperties.class})
 public class AVWebClientFactory {
     private static final String API_KEY_PARAM = "apikey";
-    public static final int BUFFER_SIZE = 20 * 1024 * 1024;
+    private static final int BUFFER_SIZE = 20 * 1024 * 1024;
     private final AlphaVantageProperties properties;
 
     public WebClient getWebClient() {

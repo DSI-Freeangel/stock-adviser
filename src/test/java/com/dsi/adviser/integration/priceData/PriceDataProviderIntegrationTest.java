@@ -54,7 +54,7 @@ public class PriceDataProviderIntegrationTest {
     private boolean isValidPriceData(PriceData data, AtomicInteger counter) {
         counter.incrementAndGet();
         return data.getStockCodeFull().equals(STOCK_CODE_FULL)
-                && data.getDate().isBefore(LocalDate.now())
+                && (data.getDate().isEqual(LocalDate.now()) || data.getDate().isBefore(LocalDate.now()))
                 && data.getPrice() != null
                 && data.getPriceMin() != null
                 && data.getPriceMax() != null

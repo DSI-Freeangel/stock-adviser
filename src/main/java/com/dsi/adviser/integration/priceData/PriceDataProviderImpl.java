@@ -33,12 +33,8 @@ public class PriceDataProviderImpl implements PriceDataProvider {
     private Flux<PriceDataEntity> selectFlow(String stockCodeFull, LocalDate lastDate, LocalDate fromDate) {
         //TODO: Move constant to application configurations
         if(ChronoUnit.DAYS.between(lastDate, LocalDate.now()) > 30) {
-            Flux<PriceDataEntity> dataFromSource = updateAndReturnData(stockCodeFull, lastDate);
-            if(null != fromDate) {
-                dataFromSource = dataFromSource.filter(priceDataEntity -> priceDataEntity.getDate().isAfter(fromDate));
-            }
-            return loadDataFromDB(stockCodeFull, fromDate)
-                    .concatWith(dataFromSource);
+            return updateAndReturnData(stockCodeFull, lastDate)
+                        .thenMany(loadDataFromDB(stockCodeFull, fromDate));
         }
         return loadDataFromDB(stockCodeFull, fromDate);
     }
@@ -50,22 +46,26 @@ public class PriceDataProviderImpl implements PriceDataProvider {
         return priceDataRepository.findAllByStockCodeFull(stockCodeFull);
     }
 
-    private Flux<PriceDataEntity> updateAndReturnData(String stockCodeFull, LocalDate fromDate) {
+    private Mono<Void> updateAndReturnData(String stockCodeFull, LocalDate fromDate) {
         return priceHistorySource.getPriceHistory(stockCodeFull, fromDate)
                 .filter(priceDataItem -> priceDataItem.getDate().isAfter(fromDate))
-                .map(priceDataItem -> toEntity(priceDataItem, stockCodeFull))
                 .window(1000)
-                .flatMap(this::saveAll);
+                .flatMap(priceDataFlux -> saveAll(priceDataFlux, stockCodeFull))
+                .then();
     }
 
-    private Flux<PriceDataEntity> saveAll(Flux<PriceDataEntity> priceDataEntityFlux) {
-        return priceDataRepository.saveAll(priceDataEntityFlux);
+    private Flux<PriceDataItem> saveAll(Flux<PriceDataItem> priceDataFlux, String stockCodeFull) {
+        Flux<PriceDataItem> dataFlux = priceDataFlux.cache();
+        return dataFlux
+                .map(priceData -> toTuples(priceData, stockCodeFull))
+                .collectList()
+                .flatMap(priceDataRepository::insertPriceDataEntities)
+                .thenMany(dataFlux);
     }
 
-    private PriceDataEntity toEntity(PriceDataItem priceDataItem, String stockCodeFull) {
-        PriceDataEntity.PriceDataEntityBuilder builder = PriceDataEntity.builder();
-        BeanUtils.copyProperties(priceDataItem, builder);
-        return builder.setStockCodeFull(stockCodeFull).build();
+    private Object[] toTuples(PriceDataItem priceData, String stockCodeFull) {
+        return new Object[]{stockCodeFull, priceData.getDate(), priceData.getPriceOpen(),
+                priceData.getPriceClose(), priceData.getPriceMin(), priceData.getPriceMax(), priceData.getVolume()};
     }
 
     private PriceData toPriceData(PriceDataEntity priceDataEntity) {

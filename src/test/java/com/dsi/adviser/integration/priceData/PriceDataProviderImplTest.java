@@ -30,7 +30,7 @@ public class PriceDataProviderImplTest {
 
     @Before
     public void init() {
-        when(priceDataRepository.saveAll(any(Flux.class))).then(i -> i.getArgument(0, Flux.class));
+        when(priceDataRepository.insertPriceDataEntities(any())).thenReturn(Mono.empty());
     }
 
     @Test
@@ -62,7 +62,7 @@ public class PriceDataProviderImplTest {
     @Test
     public void getPriceDataWithPartialUpdateFromDateProvided() {
         givenLastStoredPriceDataIsOneMonthOld();
-        givenSomeCountOfRecordsPresentInDBAfterDate(270, LocalDate.now().minusDays(31));
+        givenSomeCountOfRecordsPresentInDBAfterDate(300, LocalDate.now().minusDays(31));
         givenPriceHistorySourceIsAbleToReturnRecords(100, LocalDate.now().minusDays(1));
         Flux<PriceData> priceData = priceDataProvider.getPriceData(STOCK_CODE_FULL, LocalDate.now().minusYears(1));
 
@@ -76,7 +76,7 @@ public class PriceDataProviderImplTest {
     @Test
     public void getPriceDataWithPartialUpdateWithoutFromDate() {
         givenLastStoredPriceDataIsOneMonthOld();
-        givenSomeCountOfRecordsPresentInDB(570, LocalDate.now().minusDays(31));
+        givenSomeCountOfRecordsPresentInDB(600, LocalDate.now().minusDays(31));
         givenPriceHistorySourceIsAbleToReturnRecords(100, LocalDate.now().minusDays(1));
         Flux<PriceData> priceData = priceDataProvider.getPriceData(STOCK_CODE_FULL, null);
 
@@ -90,6 +90,7 @@ public class PriceDataProviderImplTest {
     @Test
     public void getPriceDataWithFullUpdateFromDateProvided() {
         givenNoPriceDataStoredForStock();
+        givenSomeCountOfRecordsPresentInDBAfterDate(365, LocalDate.now().minusDays(31));
         givenPriceHistorySourceIsAbleToReturnRecords(1000, LocalDate.now().minusDays(1));
         Flux<PriceData> priceData = priceDataProvider.getPriceData(STOCK_CODE_FULL, LocalDate.now().minusYears(1));
 
@@ -103,6 +104,7 @@ public class PriceDataProviderImplTest {
     @Test
     public void getPriceDataWithFullUpdateWithoutFromDate() {
         givenNoPriceDataStoredForStock();
+        givenSomeCountOfRecordsPresentInDB(1000, LocalDate.now().minusDays(1));
         givenPriceHistorySourceIsAbleToReturnRecords(1000, LocalDate.now().minusDays(1));
         Flux<PriceData> priceData = priceDataProvider.getPriceData(STOCK_CODE_FULL, null);
 
@@ -133,8 +135,8 @@ public class PriceDataProviderImplTest {
 
     private void givenNoPriceDataStoredForStock() {
         when(priceDataRepository.findFirstByStockCodeFullOrderByDateDesc(eq(STOCK_CODE_FULL))).thenReturn(Mono.empty());
-        when(priceDataRepository.findAllByStockCodeFullAndDateGreaterThanEqual(eq(STOCK_CODE_FULL), any())).thenReturn(Flux.empty());
-        when(priceDataRepository.findAllByStockCodeFull(eq(STOCK_CODE_FULL))).thenReturn(Flux.empty());
+//        when(priceDataRepository.findAllByStockCodeFullAndDateGreaterThanEqual(eq(STOCK_CODE_FULL), any())).thenReturn(Flux.empty());
+//        when(priceDataRepository.findAllByStockCodeFull(eq(STOCK_CODE_FULL))).thenReturn(Flux.empty());
     }
 
     private void givenPriceHistorySourceIsAbleToReturnRecords(int count, LocalDate lastDay) {

@@ -8,6 +8,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Repository
 @Transactional
@@ -65,4 +66,19 @@ public interface PriceRepository extends ReactiveCrudRepository<PriceEntity, Lon
     Mono<Void> executeYearAggregationQuery(LocalDate fromDate, String stockCodeFull);
 
     Flux<PriceEntity> findAllByStockCodeFullAndTypeAndDateGreaterThanEqual(String stockCodeFull, Period period, LocalDate fromDate);
+
+    Flux<PriceEntity> findAllByStockCodeFullAndTypeAndDateGreaterThanEqualAndDateLessThanEqual(String stockCodeFull, Period period, LocalDate fromDate, LocalDate toDate);
+
+    Mono<PriceEntity> findFirstByStockCodeFullAndTypeOrderByDateDesc(String stockCodeFull, Period period);
+
+    Mono<PriceEntity> findFirstByStockCodeFullAndTypeAndDate(String stockCodeFull, Period period, LocalDate exactDate);
+
+    @Query("INSERT INTO PRICE(STOCK_CODE_FULL, TYPE, DATE, PRICE, PRICE_MIN, PRICE_MAX)\n" +
+            "VALUES :tuples\n" +
+            "ON DUPLICATE KEY UPDATE\n" +
+            "  PRICE = VALUES(PRICE),\n" +
+            "  PRICE_MIN = VALUES(PRICE_MIN),\n" +
+            "  PRICE_MAX = VALUES(PRICE_MAX);")
+    Mono<Void> insertPriceEntity(List<Object[]> tuples);
+
 }

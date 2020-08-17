@@ -1,4 +1,4 @@
-package com.dsi.adviser.aggregate;
+package com.dsi.adviser.core;
 
 import com.dsi.adviser.integration.priceData.PriceDataProvider;
 import com.dsi.adviser.price.Period;
@@ -6,6 +6,7 @@ import com.dsi.adviser.price.PriceData;
 import com.dsi.adviser.price.PriceModel;
 import com.dsi.adviser.price.PriceService;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -19,12 +20,12 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class PriceHistoryAggregatorTest {
+public class PriceHistoryAggregatorReactorTest {
     private static final String STOCK_CODE_FULL = "NYSE:IBM";
 
     private final PriceService priceService = mock(PriceService.class);
     private final PriceDataProvider priceDataProvider = mock(PriceDataProvider.class);
-    private final PriceHistoryAggregator priceHistoryAggregator = new PriceHistoryAggregator(priceService, priceDataProvider);
+    private final PriceHistoryAggregatorReactor priceHistoryAggregator = new PriceHistoryAggregatorReactor(priceService, priceDataProvider);
 
     @Before
     public void init() {
@@ -32,11 +33,14 @@ public class PriceHistoryAggregatorTest {
     }
 
     @Test
+    @Ignore
     public void aggregatePrices() {
         LocalDate lastDate = LocalDate.of(2019, 8, 17);
         LocalDate currentDate = LocalDate.of(2020, 8, 14);
         givenLastAvailableDayDataForDate(lastDate);
         givenPriceDataCanBeLoadedForInterval(lastDate, currentDate);
+
+        priceHistoryAggregator.aggregate(STOCK_CODE_FULL).block();
     }
 
     private void givenLastAvailableDayDataForDate(LocalDate lastDate) {
@@ -67,7 +71,7 @@ public class PriceHistoryAggregatorTest {
         return PriceModel.builder()
                 .setStockCodeFull(STOCK_CODE_FULL)
                 .setDate(date)
-                .setType(Period.DAY)
+                .setType(period)
                 .setPrice(10.0)
                 .setPriceMin(9.0)
                 .setPriceMax(11.0)

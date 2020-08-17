@@ -1,4 +1,4 @@
-package com.dsi.adviser.aggregate;
+package com.dsi.adviser.core;
 
 import java.util.List;
 
