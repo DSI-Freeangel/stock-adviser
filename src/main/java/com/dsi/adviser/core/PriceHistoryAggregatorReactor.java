@@ -7,14 +7,17 @@ import com.dsi.adviser.price.PriceModel;
 import com.dsi.adviser.price.PriceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
-//@Service
+@Service
 @RequiredArgsConstructor
+@ConditionalOnProperty(name = "app.aggregator", havingValue = "REACTOR")
 public class PriceHistoryAggregatorReactor implements PriceHistoryAggregator {
     private final PriceService priceService;
     private final PriceDataProvider priceDataProvider;

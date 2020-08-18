@@ -5,6 +5,7 @@ import com.dsi.adviser.price.Period;
 import com.dsi.adviser.price.PriceData;
 import com.dsi.adviser.price.PriceService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -13,6 +14,7 @@ import java.time.temporal.ChronoUnit;
 
 @Service
 @RequiredArgsConstructor
+@ConditionalOnMissingBean({PriceHistoryAggregatorReactor.class})
 public class PriceHistoryAggregatorDB implements PriceHistoryAggregator {
     private final PriceService priceService;
     private final PriceDataProvider priceDataProvider;

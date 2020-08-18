@@ -10,7 +10,11 @@ import java.util.List;
 @Value
 @Builder(setterPrefix = "set")
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class PriceStatisticsModel implements PriceStatistics {
+public class StockStatisticsModel implements StockStatistics {
+    String stockCodeFull;
+    Double enterpriseValue;
+    Double earnings;
+    Double dividendsApy;
     Double priceLast;
     Double priceMinYtd;
     Double priceMaxYtd;

@@ -1,11 +1,11 @@
 package com.dsi.adviser.stock;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Value;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Value
@@ -18,7 +18,7 @@ public class StockEntity {
     Long id;
 
     @Column("CODE_FULL")
-    String codeFull;
+    String stockCodeFull;
 
     @Column("CODE")
     String code;
@@ -34,9 +34,6 @@ public class StockEntity {
 
     @Column("INDUSTRY")
     String industry;
-
-    @Column("DATA_UPDATED_DATE")
-    LocalDate dataUpdatedDate;
 
     @Column("ACTIVE")
     Boolean active = true;

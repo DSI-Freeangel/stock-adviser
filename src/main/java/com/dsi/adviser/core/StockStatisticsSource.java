@@ -6,12 +6,12 @@ import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
-public class PriceStatisticsSource {
-    private final PriceStatisticsExtractor priceStatisticsExtractor;
+public class StockStatisticsSource {
+    private final StockStatisticsExtractor stockStatisticsExtractor;
     private final PriceHistoryAggregator priceHistoryAggregator;
 
-    public Mono<PriceStatistics> aggregatePrices(String stockCodeFull){
+    public Mono<StockStatistics> getStatistics(String stockCodeFull){
         return priceHistoryAggregator.aggregate(stockCodeFull)
-                .then(priceStatisticsExtractor.extract(stockCodeFull));
+                .then(stockStatisticsExtractor.extract(stockCodeFull));
     }
 }
