@@ -3,6 +3,7 @@ package com.dsi.adviser.stock;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -29,6 +30,11 @@ public class StockService {
         return Mono.just(industryData)
                 .map(this::toStockModel)
                 .flatMap(this::updateStock);
+    }
+
+    public Flux<Stock> findAll() {
+        return stockRepository.findAllByActiveTrue()
+                .map(this::toStockModel);
     }
 
     private Stock toStockModel(IndustryData industryData) {

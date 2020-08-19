@@ -5,11 +5,12 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Value
 @Builder(setterPrefix = "set", toBuilder = true)
-@Table("PRICE")
+@Table("RATING")
 public class RatingEntity {
 
     @Id
@@ -19,11 +20,17 @@ public class RatingEntity {
     @Column("STOCK_CODE_FULL")
     String stockCodeFull;
 
+    @Column("DATE")
+    LocalDate date;
+
     @Column("BEAUTY")
     Double beauty;
 
     @Column("APY_GROWN")
     Double apyGrown;
+
+    @Column("DISCOUNT")
+    Double discount;
 
     @Column("EARNING_VALUE")
     Double earningValue;

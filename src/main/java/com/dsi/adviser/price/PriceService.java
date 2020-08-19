@@ -38,7 +38,7 @@ public class PriceService {
     }
 
     private Object[] toTuples(PriceData priceData) {
-        return new Object[]{priceData.getStockCodeFull(), priceData.getType(), priceData.getDate(),
+        return new Object[]{priceData.getStockCodeFull(), priceData.getType().name(), priceData.getDate(),
                 priceData.getPrice(), priceData.getPriceMin(), priceData.getPriceMax()};
     }
 

@@ -36,7 +36,7 @@ public class StockEntity {
     String industry;
 
     @Column("ACTIVE")
-    Boolean active = true;
+    Boolean active;
 
     @Column("CREATED_DATE")
     LocalDateTime createdDate;

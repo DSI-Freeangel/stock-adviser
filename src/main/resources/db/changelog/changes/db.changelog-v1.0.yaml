@@ -382,8 +382,10 @@ databaseChangeLog:
             columns:
               - column:
                   name:  STOCK_CODE_FULL
+              - column:
+                  name:  DATE
             indexName:  RATING_IDX_STOCK_CODE_FULL
             tableName:  RATING
-            unique:  false
+            unique: true
 
 
