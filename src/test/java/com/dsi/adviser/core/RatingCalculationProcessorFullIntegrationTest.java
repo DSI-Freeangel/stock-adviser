@@ -48,6 +48,8 @@ public class RatingCalculationProcessorFullIntegrationTest {
     @Before
     public void setUp() {
         stockRepository.save(StockEntity.builder().setStockCodeFull("NYSE:IBM").setCode("IBM").setExchange("NYSE").build()).block();
+        stockRepository.save(StockEntity.builder().setStockCodeFull("NASDAQ:AMZN").setCode("AMZN").setExchange("NASDAQ").build()).block();
+        stockRepository.save(StockEntity.builder().setStockCodeFull("NASDAQ:AAPL").setCode("AAPL").setExchange("NASDAQ").build()).block();
         stockRepository.save(StockEntity.builder().setStockCodeFull("NASDAQ:TSLA").setCode("TSLA").setExchange("NASDAQ").build()).block();
     }
 
@@ -61,9 +63,9 @@ public class RatingCalculationProcessorFullIntegrationTest {
         System.out.println("FinancialRepository is clear!!!");
         priceRepository.deleteAll().block();
         System.out.println("PriceRepository is clear!!!");
-        priceDataRepository.deleteAll().block();
+//        priceDataRepository.deleteAll().block();
         System.out.println("PriceDataRepository is clear!!!");
-        financialDataRepository.deleteAll().block();
+//        financialDataRepository.deleteAll().block();
         System.out.println("FinancialDataRepository is clear!!!");
     }
 
@@ -72,7 +74,7 @@ public class RatingCalculationProcessorFullIntegrationTest {
         Flux<Rating> rating = ratingCalculationProcessor.updateRating();
 
         StepVerifier.create(rating)
-                .expectNextCount(2)
+                .expectNextCount(4)
                 .verifyComplete();
     }
 }

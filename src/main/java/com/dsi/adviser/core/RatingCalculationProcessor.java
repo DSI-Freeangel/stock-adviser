@@ -36,7 +36,7 @@ public class RatingCalculationProcessor {
     private Rating prepareCoefficients(StockStatistics stockStatistics) {
         Double yearlyGrown = (stockStatistics.getPriceLast() - stockStatistics.getPriceYtd()) / stockStatistics.getPriceYtd();
         Double apyGrown = stockStatistics.getDividendsApy() + yearlyGrown;
-        Double discount = (stockStatistics.getPriceMaxYtd() - stockStatistics.getPriceMinYtd()) / (stockStatistics.getPriceMaxYtd() - stockStatistics.getPriceMinYtd());
+        Double discount = (stockStatistics.getPriceMaxYtd() - stockStatistics.getPriceLast()) / (stockStatistics.getPriceMaxYtd() - stockStatistics.getPriceMinYtd());
         Double earningValue = stockStatistics.getEarnings() / stockStatistics.getEnterpriseValue();
         Double hyperbolic = calculateHyperbolic(stockStatistics.getYearsPriceAvg());
         return RatingModel.builder()
@@ -109,7 +109,7 @@ public class RatingCalculationProcessor {
     }
 
     private Double normalizeSingleValue(Double value, MaxMinAggregator stats) {
-        return (value - stats.getMin()) / (stats.getMax() - stats.getMin());
+        return (stats.getMin() == 0 && stats.getMax() == 0)? 0 : (value - stats.getMin()) / (stats.getMax() - stats.getMin());
     }
 
     private Flux<Rating> persistRatings(Flux<Rating> rating) {

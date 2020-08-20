@@ -114,7 +114,7 @@ databaseChangeLog:
                   constraints:
                     nullable: true
                   name: VOLUME
-                  type: DECIMAL(10,2)
+                  type: DECIMAL(16,2)
               - column:
                   constraints:
                     nullable: false

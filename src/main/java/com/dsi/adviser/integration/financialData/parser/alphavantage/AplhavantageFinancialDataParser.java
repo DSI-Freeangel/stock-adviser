@@ -17,6 +17,9 @@ public class AplhavantageFinancialDataParser implements FinancialDataParser {
     @SneakyThrows
     public RawFinancialData parse(String json) {
         AlphavantageFinancialData avFinancialData = objectMapper.readValue(json, AlphavantageFinancialData.class);
+        if(avFinancialData.getName() == null) {
+            throw new IllegalStateException("Possible limits reached!! : " + json);
+        }
         //Calculate actual enterprise value based on EVToEBITDA and EBITDA
         double enterpriseValue = avFinancialData.getEnterpriseValue() * avFinancialData.getEarnings();
         return avFinancialData.toBuilder()
