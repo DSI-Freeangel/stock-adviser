@@ -48,6 +48,9 @@ public class RatingCalculationProcessorFullIntegrationTest {
     @Before
     public void setUp() {
         stockRepository.save(StockEntity.builder().setStockCodeFull("NYSE:IBM").setCode("IBM").setExchange("NYSE").build()).block();
+        stockRepository.save(StockEntity.builder().setStockCodeFull("NASDAQ:FB").setCode("FB").setExchange("NASDAQ").build()).block();
+        stockRepository.save(StockEntity.builder().setStockCodeFull("NASDAQ:GOOG").setCode("GOOG").setExchange("NASDAQ").build()).block();
+        stockRepository.save(StockEntity.builder().setStockCodeFull("NASDAQ:NVDA").setCode("NVDA").setExchange("NASDAQ").build()).block();
         stockRepository.save(StockEntity.builder().setStockCodeFull("NASDAQ:AMZN").setCode("AMZN").setExchange("NASDAQ").build()).block();
         stockRepository.save(StockEntity.builder().setStockCodeFull("NASDAQ:AAPL").setCode("AAPL").setExchange("NASDAQ").build()).block();
         stockRepository.save(StockEntity.builder().setStockCodeFull("NASDAQ:TSLA").setCode("TSLA").setExchange("NASDAQ").build()).block();
@@ -55,7 +58,7 @@ public class RatingCalculationProcessorFullIntegrationTest {
 
     @After
     public void tearDown() {
-        ratingRepository.deleteAll().block();
+//        ratingRepository.deleteAll().block();
         System.out.println("RatingRepository is clear!!!");
         stockRepository.deleteAll().block();
         System.out.println("StockRepository is clear!!!");
@@ -74,7 +77,7 @@ public class RatingCalculationProcessorFullIntegrationTest {
         Flux<Rating> rating = ratingCalculationProcessor.updateRating();
 
         StepVerifier.create(rating)
-                .expectNextCount(4)
+                .expectNextCount(7)
                 .verifyComplete();
     }
 }

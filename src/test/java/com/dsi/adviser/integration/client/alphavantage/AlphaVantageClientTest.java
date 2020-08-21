@@ -2,18 +2,34 @@ package com.dsi.adviser.integration.client.alphavantage;
 
 import com.dsi.adviser.integration.client.FinancialDataItem;
 import com.dsi.adviser.integration.client.PriceDataItem;
+import io.github.resilience4j.ratelimiter.RateLimiterConfig;
+import io.github.resilience4j.ratelimiter.internal.InMemoryRateLimiterRegistry;
+import org.junit.Before;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import java.time.Duration;
 import java.time.LocalDate;
+
+import static com.dsi.adviser.integration.client.alphavantage.AlphaVantageConfiguration.API;
 
 public class AlphaVantageClientTest {
     private static final String STOCK_CODE_FULL = "NYSE:IBM";
     private final AlphaVantageProperties demo = new AlphaVantageProperties("https://www.alphavantage.co/", "86T2JAZAYN5Q24FS");
     private final AVWebClientFactory webClientFactory = new AVWebClientFactory(demo);
-    private final AlphaVantageClient client = new AlphaVantageClient(webClientFactory);
+    private final InMemoryRateLimiterRegistry rateLimiterRegistry = new InMemoryRateLimiterRegistry(RateLimiterConfig.ofDefaults());
+    private final AlphaVantageClient client = new AlphaVantageClient(webClientFactory, rateLimiterRegistry);
+
+    @Before
+    public void setUp() {
+        rateLimiterRegistry.rateLimiter(API, RateLimiterConfig.custom()
+                .limitRefreshPeriod(Duration.ofMinutes(1))
+                .limitForPeriod(5)
+                .timeoutDuration(Duration.ofHours(1))
+                .build());
+    }
 
     @Test
     public void testFinancialDataReceived() {
@@ -30,7 +46,7 @@ public class AlphaVantageClientTest {
     public void testShortTimePriceSeriesReceived() {
         Flux<PriceDataItem> priceHistory = client.getPriceHistory(STOCK_CODE_FULL, LocalDate.now().minusDays(99));
         StepVerifier.create(priceHistory)
-                .expectNextMatches(data -> isValidData(data))
+                .expectNextMatches(this::isValidData)
                 .expectNextCount(99)
         .verifyComplete();
     }
@@ -40,7 +56,7 @@ public class AlphaVantageClientTest {
         Flux<PriceDataItem> priceHistory = client.getPriceHistory(STOCK_CODE_FULL, LocalDate.now().minusDays(101));
         StepVerifier.create(priceHistory)
                 .expectNextCount(101)
-                .thenConsumeWhile(data -> isValidData(data))
+                .thenConsumeWhile(this::isValidData)
                 .verifyComplete();
     }
 

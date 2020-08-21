@@ -1,4 +1,4 @@
-package com.dsi.adviser.core;
+package com.dsi.adviser.core.model;
 
 import java.util.List;
 

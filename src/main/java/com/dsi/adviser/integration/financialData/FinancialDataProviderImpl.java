@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -32,6 +33,7 @@ public class FinancialDataProviderImpl implements FinancialDataProvider {
 
     private Mono<FinancialDataEntity> loadActualData(String stockCodeFull, Mono<FinancialDataEntity> existing) {
         return dataSource.getFinancialData(stockCodeFull)
+                .publishOn(Schedulers.boundedElastic())
                 .flatMap(dataItem -> toEntity(existing, dataItem))
                 .flatMap(financialDataRepository::save);
     }

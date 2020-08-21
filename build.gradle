@@ -24,7 +24,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
     implementation 'dev.miku:r2dbc-mysql'
     implementation 'org.hibernate.validator:hibernate-validator'
-    
+    implementation 'io.github.resilience4j:resilience4j-ratelimiter:1.5.0'
+
     //Liquibase with own jdbc data source and driver
     implementation 'org.liquibase:liquibase-core:4.0.0'
     implementation 'org.springframework:spring-jdbc'

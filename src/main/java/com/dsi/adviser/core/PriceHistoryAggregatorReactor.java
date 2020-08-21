@@ -11,7 +11,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
@@ -30,26 +32,30 @@ public class PriceHistoryAggregatorReactor implements PriceHistoryAggregator {
                 .filter(date -> ChronoUnit.DAYS.between(date, LocalDate.now()) > 30).cache();
         return lastDate
                 .flatMapMany(date -> priceDataProvider.getPriceData(stockCodeFull, date))
-                .window(1000)
+                .windowTimeout(1000, Duration.ofSeconds(1))
                 .flatMap(priceService::saveAll)
+                .publishOn(Schedulers.boundedElastic())
                 .concatWith(this.completeMonth(stockCodeFull, lastDate))
                 .groupBy(priceData -> DateUtils.getFirstDayOfMonth(priceData.getDate()))
                 .flatMap(group -> group.reduce(new PriceDataAggregator())
                         .map(priceData -> this.setDateAndPeriod(priceData, group.key(), Period.MONTH)))
-                .window(1000)
+                .windowTimeout(1000, Duration.ofSeconds(1))
                 .flatMap(priceService::saveAll)
+                .publishOn(Schedulers.boundedElastic())
                 .concatWith(this.completeQuarter(stockCodeFull, lastDate))
                 .groupBy(priceData -> DateUtils.getFirstMonthOfQuarter(priceData.getDate()))
                 .flatMap(group -> group.reduce(new PriceDataAggregator())
                         .map(priceData -> this.setDateAndPeriod(priceData, group.key(), Period.QUARTER)))
-                .window(1000)
+                .windowTimeout(1000, Duration.ofSeconds(1))
                 .flatMap(priceService::saveAll)
+                .publishOn(Schedulers.boundedElastic())
                 .concatWith(this.completeYear(stockCodeFull, lastDate))
                 .groupBy(priceData -> DateUtils.getFirstMonthOfYear(priceData.getDate()))
                 .flatMap(group -> group.reduce(new PriceDataAggregator())
                         .map(priceData -> this.setDateAndPeriod(priceData, group.key(), Period.YEAR)))
-                .window(1000)
+                .windowTimeout(1000, Duration.ofSeconds(1))
                 .flatMap(priceService::saveAll)
+                .publishOn(Schedulers.boundedElastic())
                 .then();
     }
 

@@ -20,6 +20,7 @@ public class AlphavantageFinancialData implements RawFinancialData {
     @JsonProperty("LatestQuarter")
     LocalDate date;
     @JsonProperty("EVToEBITDA")
+    @JsonDeserialize(using = DoubleDeserializer.class)
     Double enterpriseValue;
     @JsonProperty("EBITDA")
     Double earnings;

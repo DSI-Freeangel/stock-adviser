@@ -8,7 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
@@ -27,8 +29,10 @@ public class PriceHistoryAggregatorDB implements PriceHistoryAggregator {
                 .filter(date -> ChronoUnit.DAYS.between(date, LocalDate.now()) > 30).cache();
         return lastDate
                 .flatMapMany(date -> priceDataProvider.getPriceData(stockCodeFull, date))
-                .window(1000)
+                .publishOn(Schedulers.boundedElastic())
+                .windowTimeout(1000, Duration.ofSeconds(1))
                 .flatMap(priceService::saveAll)
+                .publishOn(Schedulers.boundedElastic())
                 .then(priceService.executeAggregationQueries(lastDate, stockCodeFull));
     }
 }

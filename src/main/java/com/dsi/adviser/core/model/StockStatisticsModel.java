@@ -1,4 +1,4 @@
-package com.dsi.adviser.core;
+package com.dsi.adviser.core.model;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

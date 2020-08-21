@@ -16,7 +16,8 @@ public class AplhavantageFinancialDataParser implements FinancialDataParser {
     @Override
     @SneakyThrows
     public RawFinancialData parse(String json) {
-        AlphavantageFinancialData avFinancialData = objectMapper.readValue(json, AlphavantageFinancialData.class);
+        AlphavantageFinancialData avFinancialData = objectMapper
+                .readValue(json, AlphavantageFinancialData.class);
         if(avFinancialData.getName() == null) {
             throw new IllegalStateException("Possible limits reached!! : " + json);
         }

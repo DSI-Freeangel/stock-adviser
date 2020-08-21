@@ -1,5 +1,7 @@
 package com.dsi.adviser.core;
 
+import com.dsi.adviser.core.model.StockStatistics;
+import com.dsi.adviser.core.model.StockStatisticsModel;
 import com.dsi.adviser.financial.FinancialData;
 import com.dsi.adviser.price.Period;
 import com.dsi.adviser.price.PriceData;

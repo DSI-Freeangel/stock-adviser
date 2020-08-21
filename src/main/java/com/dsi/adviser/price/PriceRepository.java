@@ -74,7 +74,7 @@ public interface PriceRepository extends ReactiveCrudRepository<PriceEntity, Lon
     Mono<PriceEntity> findFirstByStockCodeFullAndTypeAndDate(String stockCodeFull, Period period, LocalDate exactDate);
 
     @Query("INSERT INTO PRICE(STOCK_CODE_FULL, TYPE, DATE, PRICE, PRICE_MIN, PRICE_MAX)\n" +
-            "VALUES :tuples\n" +
+            "VALUES :tuples \n" +
             "ON DUPLICATE KEY UPDATE\n" +
             "  PRICE = VALUES(PRICE),\n" +
             "  PRICE_MIN = VALUES(PRICE_MIN),\n" +

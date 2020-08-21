@@ -5,12 +5,15 @@ import com.dsi.adviser.integration.client.PriceHistorySource;
 import com.dsi.adviser.price.Period;
 import com.dsi.adviser.price.PriceData;
 import com.dsi.adviser.price.PriceModel;
+import io.vavr.Predicates;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
@@ -48,8 +51,9 @@ public class PriceDataProviderImpl implements PriceDataProvider {
 
     private Mono<Void> updateAndReturnData(String stockCodeFull, LocalDate fromDate) {
         return priceHistorySource.getPriceHistory(stockCodeFull, fromDate)
+                .publishOn(Schedulers.boundedElastic())
                 .filter(priceDataItem -> priceDataItem.getDate().isAfter(fromDate))
-                .window(1000)
+                .windowTimeout(1000, Duration.ofSeconds(1))
                 .flatMap(priceDataFlux -> saveAll(priceDataFlux, stockCodeFull))
                 .then();
     }
@@ -59,6 +63,7 @@ public class PriceDataProviderImpl implements PriceDataProvider {
         return dataFlux
                 .map(priceData -> toTuples(priceData, stockCodeFull))
                 .collectList()
+                .filter(Predicates.not(CollectionUtils::isEmpty))
                 .flatMap(priceDataRepository::insertPriceDataEntities)
                 .thenMany(dataFlux);
     }
