@@ -1,8 +1,9 @@
 package com.dsi.adviser.stock;
 
 public interface IndustryData {
-    String getStockCodeFull();
+    String getStockCode();
     String getName();
     String getSector();
     String getIndustry();
+    String getExchange();
 }

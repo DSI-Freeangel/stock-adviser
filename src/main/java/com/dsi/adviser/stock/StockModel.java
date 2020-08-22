@@ -10,7 +10,7 @@ import lombok.Value;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class StockModel implements Stock {
     String stockCodeFull;
-    String code;
+    String stockCode;
     String exchange;
     String name;
     String sector;

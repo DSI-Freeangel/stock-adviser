@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @Builder(setterPrefix = "set")
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class FinancialDataModel implements FinancialDataItem {
-    String stockCodeFull;
+    String stockCode;
     LocalDate date;
     String jsonResponse;
     Source source;

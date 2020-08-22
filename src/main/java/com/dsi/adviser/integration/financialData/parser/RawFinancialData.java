@@ -17,6 +17,8 @@ public interface RawFinancialData {
 
     String getName();
 
+    String getExchange();
+
     String getSector();
 
     String getIndustry();

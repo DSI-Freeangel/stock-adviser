@@ -5,6 +5,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Slf4j
 @Service
@@ -12,10 +16,13 @@ import reactor.core.publisher.Mono;
 public class StockStatisticsSource {
     private final StockStatisticsExtractor stockStatisticsExtractor;
     private final PriceHistoryAggregator priceHistoryAggregator;
+    private final ExecutorService extractExecutor = Executors.newSingleThreadExecutor();
 
-    public Mono<StockStatistics> getStatistics(String stockCodeFull){
-        return priceHistoryAggregator.aggregate(stockCodeFull)
-                .then(stockStatisticsExtractor.extract(stockCodeFull))
+    public Mono<StockStatistics> getStatistics(String stockCode){
+        return priceHistoryAggregator.aggregate(stockCode)
+                .publishOn(Schedulers.fromExecutor(extractExecutor))
+                .doOnNext(el -> log.info("Extracting data for stock {}", stockCode))
+                .then(stockStatisticsExtractor.extract(stockCode))
                 .onErrorResume(this::handleError);
     }
 

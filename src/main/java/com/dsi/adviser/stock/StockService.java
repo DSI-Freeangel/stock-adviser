@@ -12,7 +12,7 @@ public class StockService {
     private final StockRepository stockRepository;
 
     public Mono<Stock> updateStock(Stock stock) {
-        Mono<StockEntity> entityMono = stockRepository.findOneByStockCodeFullEquals(stock.getStockCodeFull())
+        Mono<StockEntity> entityMono = stockRepository.findOneByStockCodeEquals(stock.getStockCode())
                 .switchIfEmpty(Mono.fromCallable(StockEntity.builder()::build))
                 .cache();
         return entityMono
@@ -40,9 +40,8 @@ public class StockService {
     private Stock toStockModel(IndustryData industryData) {
         StockModel.StockModelBuilder modelBuilder = StockModel.builder();
         BeanUtils.copyProperties(industryData, modelBuilder);
-        String[] fullCodeSplit = industryData.getStockCodeFull().split(":");
-        return modelBuilder.setCode(fullCodeSplit[1])
-                .setExchange(fullCodeSplit[0])
+        return modelBuilder
+                .setStockCodeFull(industryData.getExchange() + ":" + industryData.getStockCode())
                 .build();
     }
 

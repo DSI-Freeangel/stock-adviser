@@ -15,19 +15,19 @@ import java.time.LocalDate;
 public class PriceService {
     private final PriceRepository repository;
 
-    public Mono<PriceData> findLastAvailablePrice(String stockCodeFull, Period period) {
-        return repository.findFirstByStockCodeFullAndTypeOrderByDateDesc(stockCodeFull, period)
+    public Mono<PriceData> findLastAvailablePrice(String stockCode, Period period) {
+        return repository.findFirstByStockCodeAndTypeOrderByDateDesc(stockCode, period)
                 .map(this::toModel);
     }
 
-    public Mono<Void> executeAggregationQueries(Mono<LocalDate> fromDate, String stockCodeFull) {
-        return fromDate.flatMap(date -> this.executeAggregationQueries(date, stockCodeFull));
+    public Mono<Void> executeAggregationQueries(Mono<LocalDate> fromDate, String stockCode) {
+        return fromDate.flatMap(date -> this.executeAggregationQueries(date, stockCode));
     }
 
-    public Mono<Void> executeAggregationQueries(LocalDate fromDate, String stockCodeFull) {
-        return repository.executeMonthAggregationQuery(fromDate, fromDate, stockCodeFull)
-                .then(repository.executeQuarterAggregationQuery(fromDate, fromDate, stockCodeFull))
-                .then(repository.executeYearAggregationQuery(fromDate, stockCodeFull));
+    public Mono<Void> executeAggregationQueries(LocalDate fromDate, String stockCode) {
+        return repository.executeMonthAggregationQuery(fromDate, fromDate, stockCode)
+                .then(repository.executeQuarterAggregationQuery(fromDate, fromDate, stockCode))
+                .then(repository.executeYearAggregationQuery(fromDate, stockCode));
     }
 
     public Flux<PriceData> saveAll(Flux<PriceData> priceDataFlux) {
@@ -41,12 +41,12 @@ public class PriceService {
     }
 
     private Object[] toTuples(PriceData priceData) {
-        return new Object[]{priceData.getStockCodeFull(), priceData.getType().name(), priceData.getDate(),
+        return new Object[]{priceData.getStockCode(), priceData.getType().name(), priceData.getDate(),
                 priceData.getPrice(), priceData.getPriceMin(), priceData.getPriceMax()};
     }
 
-    public Flux<PriceData> findPricesForInterval(String stockCodeFull, Period period, LocalDate fromDate, LocalDate toDate) {
-        return repository.findAllByStockCodeFullAndTypeAndDateGreaterThanEqualAndDateLessThanEqual(stockCodeFull, period, fromDate, toDate)
+    public Flux<PriceData> findPricesForInterval(String stockCode, Period period, LocalDate fromDate, LocalDate toDate) {
+        return repository.findAllByStockCodeAndTypeAndDateGreaterThanEqualAndDateLessThanEqual(stockCode, period, fromDate, toDate)
                 .map(this::toModel);
     }
 
@@ -56,17 +56,4 @@ public class PriceService {
         return priceModelBuilder.build();
     }
 
-    private Mono<PriceEntity> toEntity(PriceData priceData) {
-        return repository.findFirstByStockCodeFullAndTypeAndDate(priceData.getStockCodeFull(), priceData.getType(), priceData.getDate())
-                .map(PriceEntity::toBuilder)
-                .switchIfEmpty(Mono.just(PriceEntity.builder()
-                        .setStockCodeFull(priceData.getStockCodeFull())
-                        .setDate(priceData.getDate())
-                        .setType(priceData.getType())))
-                .map(priceEntityBuilder -> priceEntityBuilder
-                        .setPrice(priceData.getPrice())
-                        .setPriceMin(priceData.getPriceMin())
-                        .setPriceMax(priceData.getPriceMax()))
-                .map(PriceEntity.PriceEntityBuilder::build);
-    }
 }

@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public interface FinancialData {
-    String getStockCodeFull();
+    String getStockCode();
     LocalDate getDate();
     Double getEnterpriseValue();
     Double getEarnings();

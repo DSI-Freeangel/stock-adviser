@@ -12,9 +12,10 @@ import java.time.LocalDateTime;
 @Builder(setterPrefix = "set")
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class StockOverviewModel implements StockOverviewData {
-    String stockCodeFull;
+    String stockCode;
     LocalDate date;
     String name;
+    String exchange;
     String sector;
     String industry;
     Double enterpriseValue;

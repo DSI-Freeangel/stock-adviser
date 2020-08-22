@@ -35,14 +35,14 @@ public class FinancialRepositoryTest {
     @Test
     public void testDataReceivedByCode() {
         repository.save(FINANCIAL_ENTITY).block();
-        Mono<FinancialEntity> financialEntity = repository.findOneByStockCodeFullEquals(STOCK_CODE_FULL);
+        Mono<FinancialEntity> financialEntity = repository.findOneByStockCodeEquals(STOCK_CODE);
         verifyFinancialEntity(financialEntity);
     }
 
     private void verifyFinancialEntity(Mono<FinancialEntity> saved) {
         StepVerifier.create(saved)
                 .expectNextMatches(result -> result.getId() != null
-                        && result.getStockCodeFull().equals(STOCK_CODE_FULL)
+                        && result.getStockCode().equals(STOCK_CODE)
                         && result.getDate().equals(DATE)
                         && result.getEnterpriseValue().equals(ENTERPRISE_VALUE)
                         && result.getEarnings().equals(EARNINGS)

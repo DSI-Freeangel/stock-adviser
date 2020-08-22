@@ -19,7 +19,7 @@ public class RatingRepositoryTest {
 
     public static final RatingEntity RATING_ENTITY = RatingEntity.builder()
             .setDate(LocalDate.now())
-            .setStockCodeFull("NYSE:IBM")
+            .setStockCode("NYSE:IBM")
             .setApyGrown(0.1)
             .setDiscount(0.4)
             .setEarningValue(0.1)
@@ -41,7 +41,7 @@ public class RatingRepositoryTest {
 
         StepVerifier.create(ratingEntity)
                 .expectNextMatches(rating -> RATING_ENTITY.getDate().equals(rating.getDate())
-                        && RATING_ENTITY.getStockCodeFull().equals(rating.getStockCodeFull())
+                        && RATING_ENTITY.getStockCode().equals(rating.getStockCode())
                         && RATING_ENTITY.getApyGrown().equals(rating.getApyGrown())
                         && RATING_ENTITY.getDiscount().equals(rating.getDiscount())
                         && RATING_ENTITY.getEarningValue().equals(rating.getEarningValue())

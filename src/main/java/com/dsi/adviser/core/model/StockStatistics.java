@@ -3,7 +3,7 @@ package com.dsi.adviser.core.model;
 import java.util.List;
 
 public interface StockStatistics {
-    String getStockCodeFull();
+    String getStockCode();
     Double getEnterpriseValue();
     Double getEarnings();
     Double getDividendsApy();

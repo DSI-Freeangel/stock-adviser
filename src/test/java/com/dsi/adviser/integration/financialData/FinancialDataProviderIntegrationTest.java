@@ -16,7 +16,7 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringRunner.class)
 @ActiveProfiles("test")
 public class FinancialDataProviderIntegrationTest {
-    private static final String STOCK_CODE_FULL = "NYSE:IBM";
+    private static final String STOCK_CODE = "IBM";
     private static final String NAME = "International Business Machines Corporation";
     private static final String INDUSTRY = "Information Technology Services";
     private static final String SECTOR = "Technology";
@@ -35,7 +35,7 @@ public class FinancialDataProviderIntegrationTest {
 
     @Test
     public void testActualDataSavedAndReturned() {
-        Mono<StockOverviewData> financialData = financialDataProvider.getFinancialData(STOCK_CODE_FULL);
+        Mono<StockOverviewData> financialData = financialDataProvider.getFinancialData(STOCK_CODE);
 
         StepVerifier.create(financialData)
                 .expectNextMatches(this::isFinancialDataValid)
@@ -46,7 +46,7 @@ public class FinancialDataProviderIntegrationTest {
     }
 
     private boolean isFinancialDataValid(StockOverviewData stockOverviewData) {
-        return stockOverviewData.getStockCodeFull().equals(STOCK_CODE_FULL)
+        return stockOverviewData.getStockCode().equals(STOCK_CODE)
                 && stockOverviewData.getDate() != null
                 && stockOverviewData.getName().equals(NAME)
                 && stockOverviewData.getIndustry().equals(INDUSTRY)

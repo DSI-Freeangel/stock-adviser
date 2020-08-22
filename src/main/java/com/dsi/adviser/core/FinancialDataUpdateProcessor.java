@@ -19,14 +19,14 @@ public class FinancialDataUpdateProcessor {
     private final FinancialService financialService;
     private final StockService stockService;
 
-    public Mono<FinancialData> updateFinancialDataIfNeeded(String stockCodeFull) {
-        return financialService.findOneByStockCode(stockCodeFull)
+    public Mono<FinancialData> updateFinancialDataIfNeeded(String stockCode) {
+        return financialService.findOneByStockCode(stockCode)
                 .filter(financialData -> ChronoUnit.DAYS.between(financialData.getUpdatedDate().toLocalDate(), LocalDate.now()) < 30)
-                .switchIfEmpty(this.updateFinancialData(stockCodeFull));
+                .switchIfEmpty(this.updateFinancialData(stockCode));
     }
 
-    private Mono<FinancialData> updateFinancialData(String stockCodeFull) {
-        return financialDataProvider.getFinancialData(stockCodeFull)
+    private Mono<FinancialData> updateFinancialData(String stockCode) {
+        return financialDataProvider.getFinancialData(stockCode)
                 .transformDeferred(this::updateStock)
                 .flatMap(financialService::save);
     }

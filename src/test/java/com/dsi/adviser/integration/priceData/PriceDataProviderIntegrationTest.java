@@ -22,7 +22,7 @@ import static org.junit.Assert.assertTrue;
 @RunWith(SpringRunner.class)
 @ActiveProfiles("test")
 public class PriceDataProviderIntegrationTest {
-    private static final String STOCK_CODE_FULL = "NYSE:IBM";
+    private static final String STOCK_CODE = "IBM";
 
     @Autowired
     private PriceDataRepository priceDataRepository;
@@ -38,7 +38,7 @@ public class PriceDataProviderIntegrationTest {
 
     @Test
     public void testAllDataStoredAndReturnedSuccessfully() {
-        Flux<PriceData> priceData = priceDataProvider.getPriceData(STOCK_CODE_FULL, null);
+        Flux<PriceData> priceData = priceDataProvider.getPriceData(STOCK_CODE, null);
         AtomicInteger counter = new AtomicInteger();
         StepVerifier.create(priceData)
                 .thenConsumeWhile(data -> isValidPriceData(data, counter))
@@ -53,7 +53,7 @@ public class PriceDataProviderIntegrationTest {
 
     private boolean isValidPriceData(PriceData data, AtomicInteger counter) {
         counter.incrementAndGet();
-        return data.getStockCodeFull().equals(STOCK_CODE_FULL)
+        return data.getStockCode().equals(STOCK_CODE)
                 && (data.getDate().isEqual(LocalDate.now()) || data.getDate().isBefore(LocalDate.now()))
                 && data.getPrice() != null
                 && data.getPriceMin() != null

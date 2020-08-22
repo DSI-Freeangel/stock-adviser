@@ -22,18 +22,18 @@ public class FinancialDataProviderImpl implements FinancialDataProvider {
     private final FinancialParserProvider financialParserProvider;
 
     @Override
-    public Mono<StockOverviewData> getFinancialData(String stockCodeFull) {
-        Mono<FinancialDataEntity> existing = financialDataRepository.findOneByStockCodeFullEquals(stockCodeFull).cache();
+    public Mono<StockOverviewData> getFinancialData(String stockCode) {
+        Mono<FinancialDataEntity> existing = financialDataRepository.findOneByStockCodeEquals(stockCode).cache();
         //TODO: Move constant to application configurations
         return existing
                 .filter(financialDataEntity -> ChronoUnit.DAYS.between(financialDataEntity.getDate(), LocalDate.now()) < 30)
-                .switchIfEmpty(this.loadActualData(stockCodeFull, existing))
+                .switchIfEmpty(this.loadActualData(stockCode, existing))
                 .map(this::toFinancialData);
     }
 
-    private Mono<FinancialDataEntity> loadActualData(String stockCodeFull, Mono<FinancialDataEntity> existing) {
-        return dataSource.getFinancialData(stockCodeFull)
-                .publishOn(Schedulers.boundedElastic())
+    private Mono<FinancialDataEntity> loadActualData(String stockCode, Mono<FinancialDataEntity> existing) {
+        return dataSource.getFinancialData(stockCode)
+//                .publishOn(Schedulers.boundedElastic())
                 .flatMap(dataItem -> toEntity(existing, dataItem))
                 .flatMap(financialDataRepository::save);
     }
@@ -52,7 +52,7 @@ public class FinancialDataProviderImpl implements FinancialDataProvider {
 
     private StockOverviewData toFinancialData(FinancialDataEntity financialDataEntity) {
         StockOverviewModel.StockOverviewModelBuilder builder = StockOverviewModel.builder()
-                .setStockCodeFull(financialDataEntity.getStockCodeFull());
+                .setStockCode(financialDataEntity.getStockCode());
         Source source = financialDataEntity.getSource();
         FinancialDataParser parser = financialParserProvider.getParser(source);
         RawFinancialData financialData = parser.parse(financialDataEntity.getJsonResponse());

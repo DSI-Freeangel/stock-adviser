@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Builder(setterPrefix = "set", toBuilder = true)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class RatingModel implements Rating {
-    String stockCodeFull;
+    String stockCode;
     LocalDate date;
     Double beauty;
     Double apyGrown;

@@ -25,37 +25,33 @@ public class PriceHistoryAggregatorReactor implements PriceHistoryAggregator {
     private final PriceDataProvider priceDataProvider;
 
     @Override
-    public Mono<Void> aggregate(String stockCodeFull) {
-        Mono<LocalDate> lastDate = priceService.findLastAvailablePrice(stockCodeFull, Period.DAY)
+    public Mono<Void> aggregate(String stockCode) {
+        Mono<LocalDate> lastDate = priceService.findLastAvailablePrice(stockCode, Period.DAY)
                 .map(PriceData::getDate)
                 .switchIfEmpty(Mono.just(LocalDate.now().minusYears(100)))
                 .filter(date -> ChronoUnit.DAYS.between(date, LocalDate.now()) > 30).cache();
         return lastDate
-                .flatMapMany(date -> priceDataProvider.getPriceData(stockCodeFull, date))
+                .flatMapMany(date -> priceDataProvider.getPriceData(stockCode, date))
                 .windowTimeout(1000, Duration.ofSeconds(1))
-                .flatMap(priceService::saveAll)
-                .publishOn(Schedulers.boundedElastic())
-                .concatWith(this.completeMonth(stockCodeFull, lastDate))
+                .flatMap(priceService::saveAll,1, 6)
+                .concatWith(this.completeMonth(stockCode, lastDate))
                 .groupBy(priceData -> DateUtils.getFirstDayOfMonth(priceData.getDate()))
                 .flatMap(group -> group.reduce(new PriceDataAggregator())
                         .map(priceData -> this.setDateAndPeriod(priceData, group.key(), Period.MONTH)))
                 .windowTimeout(1000, Duration.ofSeconds(1))
-                .flatMap(priceService::saveAll)
-                .publishOn(Schedulers.boundedElastic())
-                .concatWith(this.completeQuarter(stockCodeFull, lastDate))
+                .flatMap(priceService::saveAll,1, 6)
+                .concatWith(this.completeQuarter(stockCode, lastDate))
                 .groupBy(priceData -> DateUtils.getFirstMonthOfQuarter(priceData.getDate()))
                 .flatMap(group -> group.reduce(new PriceDataAggregator())
                         .map(priceData -> this.setDateAndPeriod(priceData, group.key(), Period.QUARTER)))
                 .windowTimeout(1000, Duration.ofSeconds(1))
-                .flatMap(priceService::saveAll)
-                .publishOn(Schedulers.boundedElastic())
-                .concatWith(this.completeYear(stockCodeFull, lastDate))
+                .flatMap(priceService::saveAll,1, 6)
+                .concatWith(this.completeYear(stockCode, lastDate))
                 .groupBy(priceData -> DateUtils.getFirstMonthOfYear(priceData.getDate()))
                 .flatMap(group -> group.reduce(new PriceDataAggregator())
                         .map(priceData -> this.setDateAndPeriod(priceData, group.key(), Period.YEAR)))
                 .windowTimeout(1000, Duration.ofSeconds(1))
-                .flatMap(priceService::saveAll)
-                .publishOn(Schedulers.boundedElastic())
+                .flatMap(priceService::saveAll,1, 6)
                 .then();
     }
 
@@ -67,17 +63,17 @@ public class PriceHistoryAggregatorReactor implements PriceHistoryAggregator {
                 .build();
     }
 
-    private Flux<PriceData> completeYear(String stockCodeFull, Mono<LocalDate> lastDate) {
+    private Flux<PriceData> completeYear(String stockCode, Mono<LocalDate> lastDate) {
         return lastDate
-                .flatMapMany(date -> priceService.findPricesForInterval(stockCodeFull, Period.QUARTER, DateUtils.getFirstMonthOfYear(date), DateUtils.getFirstMonthOfQuarter(date).minusDays(1)));
+                .flatMapMany(date -> priceService.findPricesForInterval(stockCode, Period.QUARTER, DateUtils.getFirstMonthOfYear(date), DateUtils.getFirstMonthOfQuarter(date).minusDays(1)));
     }
 
-    private Flux<PriceData> completeQuarter(String stockCodeFull, Mono<LocalDate> lastDate) {
+    private Flux<PriceData> completeQuarter(String stockCode, Mono<LocalDate> lastDate) {
         return lastDate
-                .flatMapMany(date -> priceService.findPricesForInterval(stockCodeFull, Period.MONTH, DateUtils.getFirstMonthOfQuarter(date), DateUtils.getFirstDayOfMonth(date).minusDays(1)));
+                .flatMapMany(date -> priceService.findPricesForInterval(stockCode, Period.MONTH, DateUtils.getFirstMonthOfQuarter(date), DateUtils.getFirstDayOfMonth(date).minusDays(1)));
     }
 
-    private Flux<PriceData> completeMonth(String stockCodeFull, Mono<LocalDate> lastDate) {
-        return lastDate.flatMapMany(date -> priceService.findPricesForInterval(stockCodeFull, Period.DAY, DateUtils.getFirstDayOfMonth(date), date));
+    private Flux<PriceData> completeMonth(String stockCode, Mono<LocalDate> lastDate) {
+        return lastDate.flatMapMany(date -> priceService.findPricesForInterval(stockCode, Period.DAY, DateUtils.getFirstDayOfMonth(date), date));
     }
 }

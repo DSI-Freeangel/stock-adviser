@@ -6,5 +6,5 @@ import reactor.core.publisher.Flux;
 import java.time.LocalDate;
 
 public interface PriceDataProvider {
-    Flux<PriceData> getPriceData(String stockCodeFull, LocalDate fromDate);
+    Flux<PriceData> getPriceData(String stockCode, LocalDate fromDate);
 }

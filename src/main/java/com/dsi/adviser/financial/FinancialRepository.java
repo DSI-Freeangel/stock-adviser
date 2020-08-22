@@ -8,5 +8,5 @@ import reactor.core.publisher.Mono;
 @Repository
 @Transactional
 public interface FinancialRepository extends ReactiveCrudRepository<FinancialEntity, Long> {
-    Mono<FinancialEntity> findOneByStockCodeFullEquals(String stockCodeFull);
+    Mono<FinancialEntity> findOneByStockCodeEquals(String stockCode);
 }

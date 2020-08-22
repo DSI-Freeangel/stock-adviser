@@ -13,11 +13,11 @@ import java.util.List;
 @Repository
 @Transactional
 public interface PriceDataRepository extends ReactiveCrudRepository<PriceDataEntity, Long> {
-    Flux<PriceDataEntity> findAllByStockCodeFullAndDateGreaterThanEqual(String stockCodeFull, LocalDate fromDate);
-    Flux<PriceDataEntity> findAllByStockCodeFull(String stockCodeFull);
-    Mono<PriceDataEntity> findFirstByStockCodeFullOrderByDateDesc(String stockCodeFull);
+    Flux<PriceDataEntity> findAllByStockCodeAndDateGreaterThanEqual(String stockCode, LocalDate fromDate);
+    Flux<PriceDataEntity> findAllByStockCode(String stockCode);
+    Mono<PriceDataEntity> findFirstByStockCodeOrderByDateDesc(String stockCode);
 
-    @Query("INSERT INTO PRICE_DATA(STOCK_CODE_FULL, DATE, PRICE_OPEN, PRICE_CLOSE, PRICE_MIN, PRICE_MAX, VOLUME)\n" +
+    @Query("INSERT INTO PRICE_DATA(STOCK_CODE, DATE, PRICE_OPEN, PRICE_CLOSE, PRICE_MIN, PRICE_MAX, VOLUME)\n" +
             "VALUES :tuples\n" +
             "ON DUPLICATE KEY UPDATE\n" +
             "  PRICE_OPEN = VALUES(PRICE_OPEN),\n" +

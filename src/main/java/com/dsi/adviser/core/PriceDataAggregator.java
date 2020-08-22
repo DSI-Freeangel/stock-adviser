@@ -20,7 +20,7 @@ public class PriceDataAggregator implements BiFunction<PriceData, PriceData, Pri
         sum += second.getPrice();
         count ++;
         return PriceModel.builder()
-                .setStockCodeFull(first.getStockCodeFull())
+                .setStockCode(first.getStockCode())
                 .setType(first.getType())
                 .setDate(first.getDate())
                 .setPriceMin(Math.min(first.getPriceMin(), second.getPriceMin()))

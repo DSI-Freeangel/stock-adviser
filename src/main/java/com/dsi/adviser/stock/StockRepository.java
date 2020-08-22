@@ -9,6 +9,6 @@ import reactor.core.publisher.Mono;
 @Repository
 @Transactional
 public interface StockRepository extends ReactiveCrudRepository<StockEntity, Long> {
-    Mono<StockEntity> findOneByStockCodeFullEquals(String stockCodeFull);
+    Mono<StockEntity> findOneByStockCodeEquals(String stockCode);
     Flux<StockEntity> findAllByActiveTrue();
 }

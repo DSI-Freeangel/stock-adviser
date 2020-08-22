@@ -14,13 +14,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
-import static org.junit.Assert.*;
-
 @SpringBootTest
+@ActiveProfiles("test")
 @RunWith(SpringRunner.class)
 public class RatingCalculationProcessorFullIntegrationTest {
 
@@ -47,13 +47,13 @@ public class RatingCalculationProcessorFullIntegrationTest {
 
     @Before
     public void setUp() {
-        stockRepository.save(StockEntity.builder().setStockCodeFull("NYSE:IBM").setCode("IBM").setExchange("NYSE").build()).block();
-        stockRepository.save(StockEntity.builder().setStockCodeFull("NASDAQ:FB").setCode("FB").setExchange("NASDAQ").build()).block();
-        stockRepository.save(StockEntity.builder().setStockCodeFull("NASDAQ:GOOG").setCode("GOOG").setExchange("NASDAQ").build()).block();
-        stockRepository.save(StockEntity.builder().setStockCodeFull("NASDAQ:NVDA").setCode("NVDA").setExchange("NASDAQ").build()).block();
-        stockRepository.save(StockEntity.builder().setStockCodeFull("NASDAQ:AMZN").setCode("AMZN").setExchange("NASDAQ").build()).block();
-        stockRepository.save(StockEntity.builder().setStockCodeFull("NASDAQ:AAPL").setCode("AAPL").setExchange("NASDAQ").build()).block();
-        stockRepository.save(StockEntity.builder().setStockCodeFull("NASDAQ:TSLA").setCode("TSLA").setExchange("NASDAQ").build()).block();
+        stockRepository.save(StockEntity.builder().setStockCode("IBM").build()).block();
+        stockRepository.save(StockEntity.builder().setStockCode("FB").build()).block();
+        stockRepository.save(StockEntity.builder().setStockCode("GOOG").build()).block();
+        stockRepository.save(StockEntity.builder().setStockCode("NVDA").build()).block();
+        stockRepository.save(StockEntity.builder().setStockCode("AMZN").build()).block();
+        stockRepository.save(StockEntity.builder().setStockCode("AAPL").build()).block();
+        stockRepository.save(StockEntity.builder().setStockCode("TSLA").build()).block();
     }
 
     @After

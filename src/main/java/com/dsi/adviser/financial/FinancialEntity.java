@@ -17,8 +17,8 @@ public class FinancialEntity {
     @Column("ID")
     Long id;
 
-    @Column("STOCK_CODE_FULL")
-    String stockCodeFull;
+    @Column("STOCK_CODE")
+    String stockCode;
 
     @Column("DATE")
     LocalDate date;

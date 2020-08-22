@@ -11,7 +11,7 @@ import java.util.List;
 @Builder(setterPrefix = "set")
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class StockStatisticsModel implements StockStatistics {
-    String stockCodeFull;
+    String stockCode;
     Double enterpriseValue;
     Double earnings;
     Double dividendsApy;

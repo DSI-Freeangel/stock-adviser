@@ -38,18 +38,16 @@ public class RatingUpdateRunner {
     private void run() {
         log.info("Rating generation started!");
             ratingCalculationProcessor.updateRating()
-                    .publishOn(Schedulers.newSingle("complete-ratings"))
                     .doOnNext(this::logNextElement)
                     .doOnError(this::handleError)
                     .doOnComplete(this::complete)
                     .doOnSubscribe((s) -> log.info("Subscribed!"))
                     .subscribe();
-//                    .subscribe(this::logNextElement, this::handleError, this::complete, (s) -> log.info("Subscribed!"));
         log.info("Rating generation in progress.");
     }
 
     private void logNextElement(Rating rating) {
-        log.info("Rating for {} calculated", rating.getStockCodeFull());
+        log.info("Rating for {} calculated", rating.getStockCode());
     }
 
     private void handleError(Throwable exception) {

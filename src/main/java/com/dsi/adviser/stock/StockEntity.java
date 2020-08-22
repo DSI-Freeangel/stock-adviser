@@ -21,7 +21,7 @@ public class StockEntity {
     String stockCodeFull;
 
     @Column("CODE")
-    String code;
+    String stockCode;
 
     @Column("EXCHANGE")
     String exchange;

@@ -5,5 +5,5 @@ import reactor.core.publisher.Flux;
 import java.time.LocalDate;
 
 public interface PriceHistorySource {
-    Flux<PriceDataItem> getPriceHistory(String stockCodeFull, LocalDate fromDate);
+    Flux<PriceDataItem> getPriceHistory(String stockCode, LocalDate fromDate);
 }

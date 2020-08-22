@@ -19,22 +19,22 @@ public class StockStatisticsExtractor {
     private final PriceService priceService;
     private final FinancialDataUpdateProcessor financialDataUpdateProcessor;
 
-    public Mono<StockStatistics> extract(String stockCodeFull) {
+    public Mono<StockStatistics> extract(String stockCode) {
         LocalDate now = LocalDate.now();
         LocalDate fiveYearsAgo = now.minusYears(5);
         LocalDate oneYearAgo = now.minusYears(1);
-        Mono<List<Double>> prices = priceService.findPricesForInterval(stockCodeFull, Period.YEAR, fiveYearsAgo, now)
+        Mono<List<Double>> prices = priceService.findPricesForInterval(stockCode, Period.YEAR, fiveYearsAgo, now)
                 .map(PriceData::getPrice).collectList();
-        Mono<List<Double>> yearPrices = priceService.findPricesForInterval(stockCodeFull, Period.DAY, oneYearAgo, now)
+        Mono<List<Double>> yearPrices = priceService.findPricesForInterval(stockCode, Period.DAY, oneYearAgo, now)
                 .map(PriceData::getPrice).collectList();
-        Mono<FinancialData> financialData = financialDataUpdateProcessor.updateFinancialDataIfNeeded(stockCodeFull);
+        Mono<FinancialData> financialData = financialDataUpdateProcessor.updateFinancialDataIfNeeded(stockCode);
         return Mono.zip(financialData, prices, yearPrices)
                 .map(tuple -> buildPriceStatistics(tuple.getT1(), tuple.getT2(), tuple.getT3()));
     }
 
     private StockStatistics buildPriceStatistics(FinancialData financialData, List<Double> priceDataList, List<Double> yearPrices) {
         StockStatisticsModel.StockStatisticsModelBuilder builder = StockStatisticsModel.builder()
-                .setStockCodeFull(financialData.getStockCodeFull())
+                .setStockCode(financialData.getStockCode())
                 .setEnterpriseValue(financialData.getEnterpriseValue())
                 .setEarnings(financialData.getEarnings())
                 .setDividendsApy(financialData.getDividendsApy())

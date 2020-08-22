@@ -17,14 +17,14 @@ public class FinancialServiceTest {
     @Test
     public void testDataReceived() {
         givenEntityExistsInRepository();
-        Mono<FinancialData> model = financialService.findOneByStockCode(STOCK_CODE_FULL);
+        Mono<FinancialData> model = financialService.findOneByStockCode(STOCK_CODE);
         verifyModel(model);
     }
 
     @Test
     public void testNoDataReceivedIfNotPresent() {
         givenEntityIsNotPresentInRepository();
-        Mono<FinancialData> model = financialService.findOneByStockCode(STOCK_CODE_FULL);
+        Mono<FinancialData> model = financialService.findOneByStockCode(STOCK_CODE);
         verifyEmpty(model);
     }
 
@@ -49,17 +49,17 @@ public class FinancialServiceTest {
     }
 
     private void givenEntityExistsInRepository() {
-        when(financialRepository.findOneByStockCodeFullEquals(eq(STOCK_CODE_FULL))).thenReturn(Mono.just(FINANCIAL_ENTITY));
+        when(financialRepository.findOneByStockCodeEquals(eq(STOCK_CODE))).thenReturn(Mono.just(FINANCIAL_ENTITY));
     }
 
     private void givenEntityIsNotPresentInRepository() {
-        when(financialRepository.findOneByStockCodeFullEquals(eq(STOCK_CODE_FULL))).thenReturn(Mono.empty());
+        when(financialRepository.findOneByStockCodeEquals(eq(STOCK_CODE))).thenReturn(Mono.empty());
     }
 
     private void verifyModel(Mono<FinancialData> model) {
         StepVerifier.create(model)
                 .expectNextMatches(result ->
-                        result.getStockCodeFull().equals(STOCK_CODE_FULL)
+                        result.getStockCode().equals(STOCK_CODE)
                         && result.getDate().equals(DATE)
                         && result.getEnterpriseValue().equals(ENTERPRISE_VALUE)
                         && result.getEarnings().equals(EARNINGS)

@@ -21,7 +21,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class PriceHistoryAggregatorReactorTest {
-    private static final String STOCK_CODE_FULL = "NYSE:IBM";
+    private static final String STOCK_CODE = "IBM";
 
     private final PriceService priceService = mock(PriceService.class);
     private final PriceDataProvider priceDataProvider = mock(PriceDataProvider.class);
@@ -40,17 +40,17 @@ public class PriceHistoryAggregatorReactorTest {
         givenLastAvailableDayDataForDate(lastDate);
         givenPriceDataCanBeLoadedForInterval(lastDate, currentDate);
 
-        priceHistoryAggregator.aggregate(STOCK_CODE_FULL).block();
+        priceHistoryAggregator.aggregate(STOCK_CODE).block();
     }
 
     private void givenLastAvailableDayDataForDate(LocalDate lastDate) {
         PriceModel model = getPriceModelForDateAndType(lastDate, Period.DAY);
         Mono<PriceData> lastPrice = Mono.just(model);
-        when(priceService.findLastAvailablePrice(eq(STOCK_CODE_FULL), eq(Period.DAY))).thenReturn(lastPrice);
+        when(priceService.findLastAvailablePrice(eq(STOCK_CODE), eq(Period.DAY))).thenReturn(lastPrice);
     }
 
     private void givenPriceDataCanBeLoadedForInterval(LocalDate lastDate, LocalDate currentDate) {
-        when(priceDataProvider.getPriceData(eq(STOCK_CODE_FULL), eq(lastDate))).thenReturn(Flux.fromIterable(generatePriceData(lastDate, currentDate)));
+        when(priceDataProvider.getPriceData(eq(STOCK_CODE), eq(lastDate))).thenReturn(Flux.fromIterable(generatePriceData(lastDate, currentDate)));
     }
 
     private List<PriceData> generatePriceData(LocalDate lastDate, LocalDate currentDate) {
@@ -69,7 +69,7 @@ public class PriceHistoryAggregatorReactorTest {
 
     private PriceModel getPriceModelForDateAndType(LocalDate date, Period period) {
         return PriceModel.builder()
-                .setStockCodeFull(STOCK_CODE_FULL)
+                .setStockCode(STOCK_CODE)
                 .setDate(date)
                 .setType(period)
                 .setPrice(10.0)

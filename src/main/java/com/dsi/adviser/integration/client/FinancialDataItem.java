@@ -5,7 +5,7 @@ import com.dsi.adviser.integration.financialData.Source;
 import java.time.LocalDate;
 
 public interface FinancialDataItem {
-    String getStockCodeFull();
+    String getStockCode();
     LocalDate getDate();
     String getJsonResponse();
     Source getSource();

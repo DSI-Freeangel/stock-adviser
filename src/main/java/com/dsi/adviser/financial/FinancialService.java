@@ -12,7 +12,7 @@ public class FinancialService {
     private final FinancialRepository financialRepository;
 
     public Mono<FinancialData> findOneByStockCode(@NotNull String stockCode) {
-        return financialRepository.findOneByStockCodeFullEquals(stockCode)
+        return financialRepository.findOneByStockCodeEquals(stockCode)
                 .map(this::toModel);
     }
 
@@ -29,7 +29,7 @@ public class FinancialService {
     }
 
     private Mono<FinancialEntity> toEntity(FinancialData financial) {
-        return financialRepository.findOneByStockCodeFullEquals(financial.getStockCodeFull())
+        return financialRepository.findOneByStockCodeEquals(financial.getStockCode())
                 .map(FinancialEntity::toBuilder)
                 .switchIfEmpty(Mono.fromCallable(FinancialEntity::builder))
                 .doOnNext( entity -> BeanUtils.copyProperties(financial, entity))

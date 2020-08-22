@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Builder(setterPrefix = "set")
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class PriceModel implements PriceData {
-    String stockCodeFull;
+    String stockCode;
     Period type;
     LocalDate date;
     Double price;

@@ -38,7 +38,7 @@ import static org.mockito.Mockito.when;
 @RunWith(SpringRunner.class)
 public class PriceHistoryAggregatorIntegrationTest {
     private static final int BUFFER_SIZE = 20 * 1024 * 1024;
-    private static final String STOCK_CODE_FULL = "NYSE:IBM";
+    private static final String STOCK_CODE = "IBM";
     private static final LocalDate FROM_DATE = LocalDate.of(1990, 1, 1);
 
     @Autowired
@@ -85,7 +85,7 @@ public class PriceHistoryAggregatorIntegrationTest {
     public void testDataAggregated() {
         StopWatch timer = new StopWatch("Aggregation time");
         timer.start();
-        priceHistoryAggregator.aggregate(STOCK_CODE_FULL).block();
+        priceHistoryAggregator.aggregate(STOCK_CODE).block();
         timer.stop();
         System.out.println("Aggregation time = " + timer.getTotalTimeSeconds() + "s");
 
@@ -93,31 +93,31 @@ public class PriceHistoryAggregatorIntegrationTest {
         System.out.println("recordsCount = " + recordsCount);
         assertEquals(5587L, recordsCount.longValue());
 
-        Flux<PriceEntity> yearsData = priceRepository.findAllByStockCodeFullAndTypeAndDateGreaterThanEqual(STOCK_CODE_FULL, Period.YEAR, FROM_DATE);
+        Flux<PriceEntity> yearsData = priceRepository.findAllByStockCodeAndTypeAndDateGreaterThanEqual(STOCK_CODE, Period.YEAR, FROM_DATE);
 
         StepVerifier.create(yearsData)
-                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE_FULL, Period.YEAR, LocalDate.of(1999, 1, 1), 104.01, 90.0, 122.12))
-                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE_FULL, Period.YEAR, LocalDate.of(2000, 1, 1), 110.58, 80.06, 134.94))
-                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE_FULL, Period.YEAR, LocalDate.of(2001, 1, 1), 107.37, 83.75, 124.7))
-                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE_FULL, Period.YEAR, LocalDate.of(2002, 1, 1), 84.52, 54.01, 126.39))
-                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE_FULL, Period.YEAR, LocalDate.of(2003, 1, 1), 85.03, 73.17, 94.54))
-                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE_FULL, Period.YEAR, LocalDate.of(2004, 1, 1), 90.82, 81.9, 100.43))
-                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE_FULL, Period.YEAR, LocalDate.of(2005, 1, 1), 83.91, 71.85, 99.1))
-                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE_FULL, Period.YEAR, LocalDate.of(2006, 1, 1), 83.15, 72.73, 97.88))
-                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE_FULL, Period.YEAR, LocalDate.of(2007, 1, 1), 105.69, 88.77, 121.46))
-                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE_FULL, Period.YEAR, LocalDate.of(2008, 1, 1), 110.0, 69.5, 130.93))
-                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE_FULL, Period.YEAR, LocalDate.of(2009, 1, 1), 109.03, 81.76, 132.85))
-                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE_FULL, Period.YEAR, LocalDate.of(2010, 1, 1), 131.78, 116.0, 147.53))
-                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE_FULL, Period.YEAR, LocalDate.of(2011, 1, 1), 170.92, 146.64, 194.9))
-                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE_FULL, Period.YEAR, LocalDate.of(2012, 1, 1), 196.56, 177.35, 211.79))
-                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE_FULL, Period.YEAR, LocalDate.of(2013, 1, 1), 194.27, 172.57, 215.9))
-                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE_FULL, Period.YEAR, LocalDate.of(2014, 1, 1), 182.24, 150.5, 199.21))
-                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE_FULL, Period.YEAR, LocalDate.of(2015, 1, 1), 155.39, 131.65, 176.3))
-                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE_FULL, Period.YEAR, LocalDate.of(2016, 1, 1), 150.22, 116.9, 169.95))
-                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE_FULL, Period.YEAR, LocalDate.of(2017, 1, 1), 157.89, 139.13, 182.79))
-                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE_FULL, Period.YEAR, LocalDate.of(2018, 1, 1), 143.81, 105.94, 171.13))
-                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE_FULL, Period.YEAR, LocalDate.of(2019, 1, 1), 136.97, 111.69, 152.95))
-                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE_FULL, Period.YEAR, LocalDate.of(2020, 1, 1), 126.23, 90.56, 158.75))
+                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE, Period.YEAR, LocalDate.of(1999, 1, 1), 104.01, 90.0, 122.12))
+                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE, Period.YEAR, LocalDate.of(2000, 1, 1), 110.58, 80.06, 134.94))
+                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE, Period.YEAR, LocalDate.of(2001, 1, 1), 107.37, 83.75, 124.7))
+                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE, Period.YEAR, LocalDate.of(2002, 1, 1), 84.52, 54.01, 126.39))
+                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE, Period.YEAR, LocalDate.of(2003, 1, 1), 85.03, 73.17, 94.54))
+                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE, Period.YEAR, LocalDate.of(2004, 1, 1), 90.82, 81.9, 100.43))
+                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE, Period.YEAR, LocalDate.of(2005, 1, 1), 83.91, 71.85, 99.1))
+                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE, Period.YEAR, LocalDate.of(2006, 1, 1), 83.15, 72.73, 97.88))
+                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE, Period.YEAR, LocalDate.of(2007, 1, 1), 105.69, 88.77, 121.46))
+                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE, Period.YEAR, LocalDate.of(2008, 1, 1), 110.0, 69.5, 130.93))
+                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE, Period.YEAR, LocalDate.of(2009, 1, 1), 109.03, 81.76, 132.85))
+                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE, Period.YEAR, LocalDate.of(2010, 1, 1), 131.78, 116.0, 147.53))
+                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE, Period.YEAR, LocalDate.of(2011, 1, 1), 170.92, 146.64, 194.9))
+                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE, Period.YEAR, LocalDate.of(2012, 1, 1), 196.56, 177.35, 211.79))
+                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE, Period.YEAR, LocalDate.of(2013, 1, 1), 194.27, 172.57, 215.9))
+                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE, Period.YEAR, LocalDate.of(2014, 1, 1), 182.24, 150.5, 199.21))
+                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE, Period.YEAR, LocalDate.of(2015, 1, 1), 155.39, 131.65, 176.3))
+                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE, Period.YEAR, LocalDate.of(2016, 1, 1), 150.22, 116.9, 169.95))
+                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE, Period.YEAR, LocalDate.of(2017, 1, 1), 157.89, 139.13, 182.79))
+                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE, Period.YEAR, LocalDate.of(2018, 1, 1), 143.81, 105.94, 171.13))
+                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE, Period.YEAR, LocalDate.of(2019, 1, 1), 136.97, 111.69, 152.95))
+                .expectNextMatches(data -> isValidRecord(data, STOCK_CODE, Period.YEAR, LocalDate.of(2020, 1, 1), 126.23, 90.56, 158.75))
                 .verifyComplete();
     }
 
@@ -128,7 +128,7 @@ public class PriceHistoryAggregatorIntegrationTest {
                                   double price,
                                   double priceMin,
                                   double priceMax) {
-        return priceEntity.getStockCodeFull().equals(stockCode)
+        return priceEntity.getStockCode().equals(stockCode)
                 && priceEntity.getType().equals(period)
                 && priceEntity.getDate().equals(date)
                 && priceEntity.getPrice().equals(price)

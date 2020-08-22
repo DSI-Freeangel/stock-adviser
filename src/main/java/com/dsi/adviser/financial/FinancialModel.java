@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Builder(setterPrefix = "set")
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class FinancialModel implements FinancialData {
-    String stockCodeFull;
+    String stockCode;
     LocalDate date;
     Double enterpriseValue;
     Double earnings;
