@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: make-financial-date-nullable
+      author: IM
+      changes:
+        -  dropNotNullConstraint:
+             columnDataType:  DATE
+             columnName:  DATE
+             tableName:  FINANCIAL

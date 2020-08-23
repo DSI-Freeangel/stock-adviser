@@ -5,6 +5,8 @@ import java.time.LocalDate;
 public interface RawFinancialData {
     LocalDate getDate();
 
+    Double getMarketCapitalization();
+
     Double getEnterpriseValue();
 
     Double getEarnings();

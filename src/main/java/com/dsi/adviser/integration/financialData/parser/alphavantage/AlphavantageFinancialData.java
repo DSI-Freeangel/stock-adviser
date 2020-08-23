@@ -18,17 +18,25 @@ import java.time.LocalDate;
 @JsonDeserialize(builder = AlphavantageFinancialData.AlphavantageFinancialDataBuilder.class)
 public class AlphavantageFinancialData implements RawFinancialData {
     @JsonProperty("LatestQuarter")
+    @JsonDeserialize(using = LocalDateDeserializer.class)
     LocalDate date;
     @JsonProperty("EVToEBITDA")
     @JsonDeserialize(using = DoubleDeserializer.class)
     Double enterpriseValue;
     @JsonProperty("EBITDA")
+    @JsonDeserialize(using = DoubleDeserializer.class)
     Double earnings;
+    @JsonProperty("MarketCapitalization")
+    @JsonDeserialize(using = DoubleDeserializer.class)
+    Double marketCapitalization;
     @JsonProperty("DividendYield")
+    @JsonDeserialize(using = DoubleDeserializer.class)
     Double dividendsApy;
     @JsonProperty("52WeekLow")
+    @JsonDeserialize(using = DoubleDeserializer.class)
     Double priceMinYtd;
     @JsonProperty("52WeekHigh")
+    @JsonDeserialize(using = DoubleDeserializer.class)
     Double priceMaxYtd;
     @JsonProperty("Name")
     String name;

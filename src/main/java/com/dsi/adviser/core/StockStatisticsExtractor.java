@@ -8,6 +8,7 @@ import com.dsi.adviser.price.PriceData;
 import com.dsi.adviser.price.PriceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
@@ -24,9 +25,13 @@ public class StockStatisticsExtractor {
         LocalDate fiveYearsAgo = now.minusYears(5);
         LocalDate oneYearAgo = now.minusYears(1);
         Mono<List<Double>> prices = priceService.findPricesForInterval(stockCode, Period.YEAR, fiveYearsAgo, now)
-                .map(PriceData::getPrice).collectList();
+                .map(PriceData::getPrice)
+                .switchIfEmpty(Flux.error(new NoPriceDataException("No price data for stock '" + stockCode + "'")))
+                .collectList();
         Mono<List<Double>> yearPrices = priceService.findPricesForInterval(stockCode, Period.DAY, oneYearAgo, now)
-                .map(PriceData::getPrice).collectList();
+                .map(PriceData::getPrice)
+                .switchIfEmpty(Flux.error(new NoPriceDataException("No price data for stock '" + stockCode + "'")))
+                .collectList();
         Mono<FinancialData> financialData = financialDataUpdateProcessor.updateFinancialDataIfNeeded(stockCode);
         return Mono.zip(financialData, prices, yearPrices)
                 .map(tuple -> buildPriceStatistics(tuple.getT1(), tuple.getT2(), tuple.getT3()));

@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-market-cap-column
+      author: IM
+      changes:
+        - addColumn:
+            tableName: FINANCIAL
+            columns:
+              - column:
+                  name: MARKET_CAPITALIZATION
+                  type: DECIMAL(17,2)

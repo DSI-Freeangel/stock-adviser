@@ -27,7 +27,11 @@ public class StockStatisticsSource {
     }
 
     public Mono<StockStatistics> handleError(Throwable e) {
-        log.error("Error while getting data for stock", e);
+        if(e instanceof NoPriceDataException) {
+            log.error(e.getMessage());
+        } else {
+            log.error("Error while getting data for stock", e);
+        }
         return Mono.empty();
     }
 }

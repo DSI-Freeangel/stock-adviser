@@ -18,6 +18,7 @@ public class StockOverviewModel implements StockOverviewData {
     String exchange;
     String sector;
     String industry;
+    Double marketCapitalization;
     Double enterpriseValue;
     Double earnings;
     Double dividendsApy;

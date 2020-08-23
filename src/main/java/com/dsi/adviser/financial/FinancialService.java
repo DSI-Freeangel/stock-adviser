@@ -2,10 +2,12 @@ package com.dsi.adviser.financial;
 
 import com.sun.istack.internal.NotNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class FinancialService {
@@ -19,6 +21,7 @@ public class FinancialService {
     public Mono<FinancialData> save(FinancialData financial) {
         return toEntity(financial)
                 .flatMap(financialRepository::save)
+                .doOnNext(v -> log.info("Stock '{}' financial data updated!", financial.getStockCode()))
                 .map(this::toModel);
     }
 

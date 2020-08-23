@@ -1,14 +1,16 @@
 package com.dsi.adviser.stock;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-public class StockService {
+public class StockService implements RemoveStockService{
     private final StockRepository stockRepository;
 
     public Mono<Stock> updateStock(Stock stock) {
@@ -29,7 +31,8 @@ public class StockService {
     public Mono<Stock> updateStockIndustryData(IndustryData industryData) {
         return Mono.just(industryData)
                 .map(this::toStockModel)
-                .flatMap(this::updateStock);
+                .flatMap(this::updateStock)
+                .doOnNext(v -> log.info("Stock '{}' industry data updated!", industryData.getStockCode()));
     }
 
     public Flux<Stock> findAll() {
@@ -51,4 +54,14 @@ public class StockService {
         return modelBuilder.build();
     }
 
+    @Override
+    public Mono<Void> removeByCode(String stockCode) {
+        return stockRepository.findOneByStockCodeEquals(stockCode)
+                .map(StockEntity::toBuilder)
+                .map(builder -> builder.setActive(false))
+                .map(StockEntity.StockEntityBuilder::build)
+                .flatMap(stockRepository::save)
+                .doOnNext(v -> log.info("Stock '{}' removed from rating scope!", stockCode))
+                .then();
+    }
 }

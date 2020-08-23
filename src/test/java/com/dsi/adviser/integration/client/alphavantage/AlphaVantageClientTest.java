@@ -2,6 +2,7 @@ package com.dsi.adviser.integration.client.alphavantage;
 
 import com.dsi.adviser.integration.client.FinancialDataItem;
 import com.dsi.adviser.integration.client.PriceDataItem;
+import com.dsi.adviser.stock.RemoveStockService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -17,17 +18,21 @@ import java.time.Duration;
 import java.time.LocalDate;
 
 import static com.dsi.adviser.integration.client.alphavantage.AlphaVantageConfiguration.API;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class AlphaVantageClientTest {
     private static final String STOCK_CODE = "IBM";
     private final AlphaVantageProperties demo = new AlphaVantageProperties("https://www.alphavantage.co/", "86T2JAZAYN5Q24FS");
     private final AVWebClientFactory webClientFactory = new AVWebClientFactory(demo);
     private final InMemoryRateLimiterRegistry rateLimiterRegistry = new InMemoryRateLimiterRegistry(RateLimiterConfig.ofDefaults());
+    private final RemoveStockService removeStockService = mock(RemoveStockService.class);
     private final ObjectMapper MAPPER = new ObjectMapper()
             .registerModule(new JavaTimeModule())
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-    private final AlphaVantageClient client = new AlphaVantageClient(webClientFactory, rateLimiterRegistry, MAPPER);
+    private final AlphaVantageClient client = new AlphaVantageClient(webClientFactory, rateLimiterRegistry, removeStockService,  MAPPER);
 
     @Before
     public void setUp() {
@@ -36,6 +41,7 @@ public class AlphaVantageClientTest {
                 .limitForPeriod(5)
                 .timeoutDuration(Duration.ofHours(1))
                 .build());
+        when(removeStockService.removeByCode(any())).thenReturn(Mono.empty());
     }
 
     @Test

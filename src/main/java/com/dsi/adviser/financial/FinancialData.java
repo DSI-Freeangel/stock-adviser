@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 public interface FinancialData {
     String getStockCode();
     LocalDate getDate();
+    Double getMarketCapitalization();
     Double getEnterpriseValue();
     Double getEarnings();
     Double getDividendsApy();

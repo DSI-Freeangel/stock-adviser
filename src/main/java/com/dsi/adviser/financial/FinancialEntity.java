@@ -23,6 +23,9 @@ public class FinancialEntity {
     @Column("DATE")
     LocalDate date;
 
+    @Column("MARKET_CAPITALIZATION")
+    Double marketCapitalization;
+
     @Column("ENTERPRISE_VALUE")
     Double enterpriseValue;
 

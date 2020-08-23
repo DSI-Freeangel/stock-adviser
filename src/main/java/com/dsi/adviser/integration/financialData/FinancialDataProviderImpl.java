@@ -6,6 +6,7 @@ import com.dsi.adviser.integration.financialData.parser.FinancialDataParser;
 import com.dsi.adviser.integration.financialData.parser.FinancialParserProvider;
 import com.dsi.adviser.integration.financialData.parser.RawFinancialData;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -14,6 +15,7 @@ import reactor.core.scheduler.Schedulers;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class FinancialDataProviderImpl implements FinancialDataProvider {
@@ -28,12 +30,18 @@ public class FinancialDataProviderImpl implements FinancialDataProvider {
         return existing
                 .filter(financialDataEntity -> ChronoUnit.DAYS.between(financialDataEntity.getDate(), LocalDate.now()) < 30)
                 .switchIfEmpty(this.loadActualData(stockCode, existing))
-                .map(this::toFinancialData);
+                .map(this::toFinancialData)
+                .onErrorResume(this::handleErrors);
+    }
+
+    private Mono<StockOverviewData> handleErrors(Throwable throwable) {
+        log.error(throwable.getMessage());
+        log.debug("Error: ", throwable);
+        return Mono.empty();
     }
 
     private Mono<FinancialDataEntity> loadActualData(String stockCode, Mono<FinancialDataEntity> existing) {
         return dataSource.getFinancialData(stockCode)
-//                .publishOn(Schedulers.boundedElastic())
                 .flatMap(dataItem -> toEntity(existing, dataItem))
                 .flatMap(financialDataRepository::save);
     }

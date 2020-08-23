@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 public class FinancialModel implements FinancialData {
     String stockCode;
     LocalDate date;
+    Double marketCapitalization;
     Double enterpriseValue;
     Double earnings;
     Double dividendsApy;

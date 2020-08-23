@@ -1,9 +1,11 @@
 package com.dsi.adviser.integration.client.alphavantage;
 
 import com.dsi.adviser.integration.client.*;
+import com.dsi.adviser.integration.client.alphavantage.model.ErrorResponse;
 import com.dsi.adviser.integration.client.alphavantage.model.PriceItem;
 import com.dsi.adviser.integration.client.alphavantage.model.PriceSeries;
 import com.dsi.adviser.integration.financialData.Source;
+import com.dsi.adviser.stock.RemoveStockService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.resilience4j.ratelimiter.RateLimiter;
 import io.github.resilience4j.ratelimiter.RateLimiterRegistry;
@@ -39,6 +41,7 @@ public class AlphaVantageClient implements PriceHistorySource, FinancialDataSour
     private static final int SHORT_PERIOD = 100;
     private final AVWebClientFactory webClientFactory;
     private final RateLimiterRegistry rateLimiterRegistry;
+    private final RemoveStockService removeStockService;
     private final ObjectMapper objectMapper;
     private final ExecutorService requestExecutor = Executors.newSingleThreadExecutor();
     private final ExecutorService continueExecutor = Executors.newFixedThreadPool(2);
@@ -50,7 +53,23 @@ public class AlphaVantageClient implements PriceHistorySource, FinancialDataSour
                 .transformDeferred(this::rateLimit)
                 .doOnNext(stock -> log.info(String.format("Going to get financial data for stock '%s'", stock)))
                 .flatMap(this::getFinancialDataResponse)
-                .map(responseString -> toFinancialData(responseString, stockCode));
+                .doOnNext(responseString -> handleErrorResponses(responseString, stockCode))
+                .map(responseString -> toFinancialData(responseString, stockCode))
+                .retry(3);
+    }
+
+    @SneakyThrows
+    private Mono<String> handleErrorResponses(String responseString, String stockCode) {
+        ErrorResponse priceSeries = objectMapper.readValue(responseString, ErrorResponse.class);
+        if(priceSeries.getNote() != null) {
+            log.info("API response note: {}", priceSeries.getNote());
+            throw new FrequencyLimitException(priceSeries.getNote());
+        }
+        if(priceSeries.getErrorMessage() != null) {
+            log.info("Error message returned: {} ", priceSeries.getErrorMessage());
+            return removeStockService.removeByCode(stockCode).thenReturn(responseString);
+        }
+        return Mono.just(responseString);
     }
 
     private Mono<String> getFinancialDataResponse(String stockCode) {
@@ -71,9 +90,12 @@ public class AlphaVantageClient implements PriceHistorySource, FinancialDataSour
                 .transformDeferred(this::rateLimit)
                 .doOnNext(stock -> log.info(String.format("Going to get price history for stock '%s'", stock)))
                 .flatMap(stock -> getPriceSeriesResponse(stock, fromDate))
+                .doOnNext(responseString -> handleErrorResponses(responseString, stockCode))
                 .publishOn(Schedulers.fromExecutor(continueExecutor))
+                .map(this::getPriceSeries)
                 .flatMapIterable(response -> getEntries(stockCode, response))
-                .map(this::toPriceDataModel);
+                .map(this::toPriceDataModel)
+                .retry(3);
     }
 
     private Set<Map.Entry<LocalDate, PriceItem>> getEntries(String stockCode, PriceSeries response) {
@@ -84,21 +106,16 @@ public class AlphaVantageClient implements PriceHistorySource, FinancialDataSour
         return new HashSet<>();
     }
 
-    private Mono<PriceSeries> getPriceSeriesResponse(String stockCode, LocalDate fromDate) {
+    private Mono<String> getPriceSeriesResponse(String stockCode, LocalDate fromDate) {
         return getWebClient().get().uri(uriBuilder -> buildPriceHistoryUrl(stockCode, fromDate, uriBuilder))
                 .accept(APPLICATION_JSON)
                 .retrieve()
-                .bodyToMono(String.class)
-                .map(string -> getPriceSeries(stockCode, string));
+                .bodyToMono(String.class);
     }
 
     @SneakyThrows
-    private PriceSeries getPriceSeries(String stockCode, String string) {
-        PriceSeries priceSeries = objectMapper.readValue(string, PriceSeries.class);
-        if(priceSeries.getPrices() == null) {
-            log.info("Failed to read response for {} with message:\n {}", stockCode,  string);
-        }
-        return priceSeries;
+    private PriceSeries getPriceSeries(String string) {
+        return objectMapper.readValue(string, PriceSeries.class);
     }
 
     private URI buildPriceHistoryUrl(String stockCode, LocalDate fromDate, UriBuilder uriBuilder) {

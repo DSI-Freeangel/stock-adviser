@@ -66,7 +66,7 @@ public class PriceDataProviderImpl implements PriceDataProvider {
                 .filter(Predicates.not(CollectionUtils::isEmpty))
                 .doOnNext((v) -> log.info("Going to save history for stock {}", stockCode))
                 .publishOn(Schedulers.fromExecutor(saveExecutor))
-                .flatMap(priceDataRepository::insertPriceDataEntities, 1, 8)
+                .flatMap(priceDataRepository::insertPriceDataEntities, 1, 1)
                 .doOnNext((v) -> log.info("Price history saved for stock {}", stockCode))
                 .then();
     }
