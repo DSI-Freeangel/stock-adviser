@@ -50,10 +50,12 @@ public class AlphaVantageClient implements PriceHistorySource, FinancialDataSour
     @Override
     public Mono<FinancialDataItem> getFinancialData(String stockCode) {
         return Mono.just(stockCode)
+                .publishOn(Schedulers.fromExecutor(requestExecutor))
                 .transformDeferred(this::rateLimit)
                 .doOnNext(stock -> log.info(String.format("Going to get financial data for stock '%s'", stock)))
                 .flatMap(this::getFinancialDataResponse)
                 .doOnNext(responseString -> handleErrorResponses(responseString, stockCode))
+                .publishOn(Schedulers.fromExecutor(continueExecutor))
                 .map(responseString -> toFinancialData(responseString, stockCode))
                 .retry(3);
     }
@@ -67,7 +69,7 @@ public class AlphaVantageClient implements PriceHistorySource, FinancialDataSour
         }
         if(priceSeries.getErrorMessage() != null) {
             log.info("Error message returned: {} ", priceSeries.getErrorMessage());
-            return removeStockService.removeByCode(stockCode).thenReturn(responseString);
+            return removeStockService.removeByCode(stockCode).then(Mono.just(responseString));
         }
         return Mono.just(responseString);
     }

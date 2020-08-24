@@ -17,8 +17,8 @@ public class AlphaVantageConfiguration {
     public RateLimiterRegistry rateLimiterRegistry() {
         InMemoryRateLimiterRegistry rateLimiterRegistry = new InMemoryRateLimiterRegistry(RateLimiterConfig.ofDefaults());
         rateLimiterRegistry.rateLimiter(API, RateLimiterConfig.custom()
-                .limitRefreshPeriod(Duration.ofMinutes(1))
-                .limitForPeriod(5)
+                .limitRefreshPeriod(Duration.ofSeconds(12))
+                .limitForPeriod(1)
                 .timeoutDuration(Duration.ofHours(1))
                 .build());
         return rateLimiterRegistry;

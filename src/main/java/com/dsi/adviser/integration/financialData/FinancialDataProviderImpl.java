@@ -5,12 +5,12 @@ import com.dsi.adviser.integration.client.FinancialDataSource;
 import com.dsi.adviser.integration.financialData.parser.FinancialDataParser;
 import com.dsi.adviser.integration.financialData.parser.FinancialParserProvider;
 import com.dsi.adviser.integration.financialData.parser.RawFinancialData;
+import com.dsi.adviser.stock.RemoveStockService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -22,6 +22,7 @@ public class FinancialDataProviderImpl implements FinancialDataProvider {
     private final FinancialDataSource dataSource;
     private final FinancialDataRepository financialDataRepository;
     private final FinancialParserProvider financialParserProvider;
+    private final RemoveStockService removeStockService;
 
     @Override
     public Mono<StockOverviewData> getFinancialData(String stockCode) {
@@ -31,13 +32,13 @@ public class FinancialDataProviderImpl implements FinancialDataProvider {
                 .filter(financialDataEntity -> ChronoUnit.DAYS.between(financialDataEntity.getDate(), LocalDate.now()) < 30)
                 .switchIfEmpty(this.loadActualData(stockCode, existing))
                 .map(this::toFinancialData)
-                .onErrorResume(this::handleErrors);
+                .onErrorResume(throwable -> handleErrors(throwable, stockCode));
     }
 
-    private Mono<StockOverviewData> handleErrors(Throwable throwable) {
+    private Mono<StockOverviewData> handleErrors(Throwable throwable, String stockCode) {
         log.error(throwable.getMessage());
         log.debug("Error: ", throwable);
-        return Mono.empty();
+        return removeStockService.removeByCode(stockCode).then(Mono.empty());
     }
 
     private Mono<FinancialDataEntity> loadActualData(String stockCode, Mono<FinancialDataEntity> existing) {

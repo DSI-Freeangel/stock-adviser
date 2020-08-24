@@ -21,3 +21,15 @@ app:
       enabled: true
       url: https://www.alphavantage.co/
       apiKey: 86T2JAZAYN5Q24FS
+
+rating:
+  eligibility:
+    market-cap:
+      enabled: true
+      threshold: 1_000_000_000
+    enterprise-value:
+      enabled: true
+      threshold: 1_000_000_000
+    earnings:
+      enabled: true
+      threshold: 0

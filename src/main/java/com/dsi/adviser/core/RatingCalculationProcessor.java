@@ -1,5 +1,6 @@
 package com.dsi.adviser.core;
 
+import com.dsi.adviser.core.filter.RatingEligibilityCompositeFilter;
 import com.dsi.adviser.core.model.StockStatistics;
 import com.dsi.adviser.rating.Rating;
 import com.dsi.adviser.rating.RatingModel;
@@ -29,11 +30,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class RatingCalculationProcessor {
     private final StockStatisticsSource stockStatisticsSource;
+    private final RatingEligibilityCompositeFilter ratingEligibilityFilter;
     private final StockService stockService;
     private final RatingService ratingService;
     private final ExecutorService readExecutor = Executors.newSingleThreadExecutor();
+    private final ExecutorService getStatisticsExecutor = Executors.newSingleThreadExecutor();
     private final ExecutorService persistExecutor = Executors.newSingleThreadExecutor();
-    private final ExecutorService calcualtionExecutor = Executors.newFixedThreadPool(4);
+    private final ExecutorService calculationExecutor = Executors.newFixedThreadPool(4);
 
 
     public Flux<Rating> updateRating() {
@@ -45,9 +48,11 @@ public class RatingCalculationProcessor {
                 .thenMany(stockService.findAll())
                 .publishOn(Schedulers.fromExecutor(readExecutor))
                 .map(Stock::getStockCode)
+                .transformDeferred(ratingEligibilityFilter::filter)
+                .publishOn(Schedulers.fromExecutor(getStatisticsExecutor))
                 .doOnNext(item -> log.info("Going to prepare statistics for #{} {}", inputCounter.incrementAndGet(), item))
-                .flatMap(stockStatisticsSource::getStatistics,4, 10)
-                .publishOn(Schedulers.fromExecutor(calcualtionExecutor))
+                .flatMap(stockStatisticsSource::getStatistics,4, 4)
+                .publishOn(Schedulers.fromExecutor(calculationExecutor))
                 .subscribeOn(Schedulers.boundedElastic())
                 .doOnNext(stockStatistics -> log.info("Going to start calculation for #{} {}", processingCounter.incrementAndGet(), stockStatistics.getStockCode()))
                 .map(this::prepareCoefficients)
@@ -57,7 +62,7 @@ public class RatingCalculationProcessor {
                 .doOnNext(rating -> log.info("Going to save rating for #{} {}", persistCounter.incrementAndGet(), rating.getStockCode()))
                 .windowTimeout(1000, Duration.ofSeconds(1))
                 .publishOn(Schedulers.fromExecutor(persistExecutor))
-                .flatMap(this::persistRatings, 1, 6)
+                .flatMap(this::persistRatings, 1, 1)
                 .doOnNext(rating -> log.info("Rating saved for #{} {}", completeCounter.incrementAndGet(), rating.getStockCode()));
     }
 

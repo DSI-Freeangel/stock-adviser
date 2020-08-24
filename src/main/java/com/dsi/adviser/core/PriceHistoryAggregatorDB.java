@@ -40,7 +40,7 @@ public class PriceHistoryAggregatorDB implements PriceHistoryAggregator {
                 .subscribeOn(Schedulers.fromExecutor(continueExecutor))
                 .window(1000)
                 .publishOn(Schedulers.fromExecutor(persistExecutor))
-                .flatMap(priceService::saveAll, 1, 6)
+                .flatMap(priceService::saveAll, 1, 1)
                 .subscribeOn(Schedulers.fromExecutor(continueExecutor))
                 .then(priceService.executeAggregationQueries(lastDate, stockCode));
     }
