@@ -53,7 +53,6 @@ public class RatingCalculationProcessor {
                 .doOnNext(item -> log.info("Going to prepare statistics for #{} {}", inputCounter.incrementAndGet(), item))
                 .flatMap(stockStatisticsSource::getStatistics,4, 4)
                 .publishOn(Schedulers.fromExecutor(calculationExecutor))
-                .subscribeOn(Schedulers.boundedElastic())
                 .doOnNext(stockStatistics -> log.info("Going to start calculation for #{} {}", processingCounter.incrementAndGet(), stockStatistics.getStockCode()))
                 .map(this::prepareCoefficients)
                 .collectList()
@@ -64,10 +63,6 @@ public class RatingCalculationProcessor {
                 .publishOn(Schedulers.fromExecutor(persistExecutor))
                 .flatMap(this::persistRatings, 1, 1)
                 .doOnNext(rating -> log.info("Rating saved for #{} {}", completeCounter.incrementAndGet(), rating.getStockCode()));
-    }
-
-    private void handleError(Throwable throwable, Object source) {
-        log.error("Error for element {} : {}", source, throwable);
     }
 
     private Rating prepareCoefficients(StockStatistics stockStatistics) {
@@ -97,10 +92,10 @@ public class RatingCalculationProcessor {
         Double total = 0.0;
         if(iterator.hasNext()) {
             Double previous = iterator.next();
-            total = 1 + previous;
+            total = previous;
             while (iterator.hasNext()) {
                 Double next = iterator.next();
-                total *= 1 + (next - previous);
+                total += (next - previous);
                 previous = next;
             }
         }

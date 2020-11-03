@@ -57,7 +57,16 @@ public class AlphaVantageClient implements PriceHistorySource, FinancialDataSour
                 .doOnNext(responseString -> handleErrorResponses(responseString, stockCode))
                 .publishOn(Schedulers.fromExecutor(continueExecutor))
                 .map(responseString -> toFinancialData(responseString, stockCode))
-                .retry(3);
+                .retry(3)
+                .onErrorResume(this::handleLimitError);
+    }
+
+    private Mono<FinancialDataItem> handleLimitError(Throwable throwable) {
+        if(throwable instanceof FrequencyLimitException) {
+            log.info("Ignoring after 3 retries");
+            return Mono.empty();
+        }
+        return Mono.error(throwable);
     }
 
     @SneakyThrows
@@ -66,6 +75,10 @@ public class AlphaVantageClient implements PriceHistorySource, FinancialDataSour
         if(priceSeries.getNote() != null) {
             log.info("API response note: {}", priceSeries.getNote());
             throw new FrequencyLimitException(priceSeries.getNote());
+        }
+        if(priceSeries.getInformation() != null) {
+            log.info("API response information: {}", priceSeries.getInformation());
+            throw new FrequencyLimitException(priceSeries.getInformation());
         }
         if(priceSeries.getErrorMessage() != null) {
             log.info("Error message returned: {} ", priceSeries.getErrorMessage());

@@ -12,6 +12,8 @@ import lombok.Value;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @JsonDeserialize(builder = ErrorResponse.ErrorResponseBuilder.class)
 public class ErrorResponse {
+    @JsonProperty("Information")
+    String information;
     @JsonProperty("Note")
     String note;
     @JsonProperty("Error Message")

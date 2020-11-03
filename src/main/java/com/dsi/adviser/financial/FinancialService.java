@@ -35,7 +35,7 @@ public class FinancialService {
         return financialRepository.findOneByStockCodeEquals(financial.getStockCode())
                 .map(FinancialEntity::toBuilder)
                 .switchIfEmpty(Mono.fromCallable(FinancialEntity::builder))
-                .doOnNext( entity -> BeanUtils.copyProperties(financial, entity))
+                .doOnNext( entity -> BeanUtils.copyProperties(financial, entity, "createdDate", "updatedDate"))
                 .map(FinancialEntity.FinancialEntityBuilder::build);
     }
 }

@@ -34,7 +34,8 @@ public class StockStatisticsExtractor {
                 .collectList();
         Mono<FinancialData> financialData = financialDataUpdateProcessor.updateFinancialDataIfNeeded(stockCode);
         return Mono.zip(financialData, prices, yearPrices)
-                .map(tuple -> buildPriceStatistics(tuple.getT1(), tuple.getT2(), tuple.getT3()));
+                .map(tuple -> buildPriceStatistics(tuple.getT1(), tuple.getT2(), tuple.getT3()))
+                .filter(statistics -> statistics.getYearsPriceAvg().size() == 5);//Show only companies with full 5 year history
     }
 
     private StockStatistics buildPriceStatistics(FinancialData financialData, List<Double> priceDataList, List<Double> yearPrices) {
