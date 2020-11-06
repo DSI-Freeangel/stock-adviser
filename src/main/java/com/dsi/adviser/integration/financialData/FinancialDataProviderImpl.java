@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 @Slf4j
@@ -56,6 +57,7 @@ public class FinancialDataProviderImpl implements FinancialDataProvider {
 
     private FinancialDataEntity populateFields(FinancialDataEntity.FinancialDataEntityBuilder entityBuilder, FinancialDataItem dataItem) {
         BeanUtils.copyProperties(dataItem, entityBuilder);
+        entityBuilder.setUpdatedDate(LocalDateTime.now());
         return entityBuilder.build();
     }
 

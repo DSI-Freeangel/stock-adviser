@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDateTime;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -23,6 +25,7 @@ public class StockService implements RemoveStockService{
                 .flatMap(existing -> entityMono)
                 .map(StockEntity::toBuilder)
                 .doOnNext(entityBuilder -> BeanUtils.copyProperties(stock, entityBuilder))
+                .doOnNext(entityBuilder -> entityBuilder.setUpdatedDate(LocalDateTime.now()))
                 .map(StockEntity.StockEntityBuilder::build)
                 .flatMap(stockRepository::save)
                 .map(this::toStockModel);

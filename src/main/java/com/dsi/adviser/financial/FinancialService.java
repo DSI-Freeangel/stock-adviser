@@ -7,6 +7,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDateTime;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -36,6 +38,7 @@ public class FinancialService {
                 .map(FinancialEntity::toBuilder)
                 .switchIfEmpty(Mono.fromCallable(FinancialEntity::builder))
                 .doOnNext( entity -> BeanUtils.copyProperties(financial, entity, "createdDate", "updatedDate"))
+                .doOnNext(entity -> entity.setUpdatedDate(LocalDateTime.now()))
                 .map(FinancialEntity.FinancialEntityBuilder::build);
     }
 }
