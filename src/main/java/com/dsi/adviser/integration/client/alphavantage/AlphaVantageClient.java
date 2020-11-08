@@ -7,15 +7,12 @@ import com.dsi.adviser.integration.client.alphavantage.model.PriceSeries;
 import com.dsi.adviser.integration.financialData.Source;
 import com.dsi.adviser.stock.RemoveStockService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.resilience4j.ratelimiter.RateLimiter;
-import io.github.resilience4j.ratelimiter.RateLimiterRegistry;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriBuilder;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -39,21 +36,18 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 @ConditionalOnBean({AlphaVantageProperties.class})
 public class AlphaVantageClient implements PriceHistorySource, FinancialDataSource {
     private static final int SHORT_PERIOD = 100;
-    private final AVWebClientFactory webClientFactory;
-    private final RateLimiterRegistry rateLimiterRegistry;
+    private final WebClientProvider webClientProvider;
     private final RemoveStockService removeStockService;
     private final ObjectMapper objectMapper;
     private final ExecutorService requestExecutor = Executors.newSingleThreadExecutor();
     private final ExecutorService continueExecutor = Executors.newFixedThreadPool(2);
-    private WebClient webClient;
 
     @Override
     public Mono<FinancialDataItem> getFinancialData(String stockCode) {
         return Mono.just(stockCode)
                 .publishOn(Schedulers.fromExecutor(requestExecutor))
-                .transformDeferred(this::rateLimit)
-                .doOnNext(stock -> log.info(String.format("Going to get financial data for stock '%s'", stock)))
-                .flatMap(this::getFinancialDataResponse)
+                .doOnNext(code -> log.info(String.format("Going to get financial data for stock '%s'", code)))
+                .transformDeferred(stockCodeMono -> stockCodeMono.flatMap(this::getFinancialDataResponse))
                 .doOnNext(responseString -> handleErrorResponses(responseString, stockCode))
                 .publishOn(Schedulers.fromExecutor(continueExecutor))
                 .map(responseString -> toFinancialData(responseString, stockCode))
@@ -88,7 +82,7 @@ public class AlphaVantageClient implements PriceHistorySource, FinancialDataSour
     }
 
     private Mono<String> getFinancialDataResponse(String stockCode) {
-        return getWebClient().get().uri(uriBuilder -> uriBuilder.path("/query")
+        return webClientProvider.next().get().uri(uriBuilder -> uriBuilder.path("/query")
                 .queryParam("function", "OVERVIEW")
                 .queryParam("symbol", stockCode)
                 .queryParam("apikey", "{apikey}")
@@ -102,9 +96,8 @@ public class AlphaVantageClient implements PriceHistorySource, FinancialDataSour
     public Flux<PriceDataItem> getPriceHistory(String stockCode, LocalDate fromDate) {
         return Mono.just(stockCode)
                 .publishOn(Schedulers.fromExecutor(requestExecutor))
-                .transformDeferred(this::rateLimit)
-                .doOnNext(stock -> log.info(String.format("Going to get price history for stock '%s'", stock)))
-                .flatMap(stock -> getPriceSeriesResponse(stock, fromDate))
+                .doOnNext(code -> log.info(String.format("Going to get price history for stock '%s'", code)))
+                .transformDeferred(codeMono -> codeMono.flatMap(code -> getPriceSeriesResponse(code, fromDate)))
                 .doOnNext(responseString -> handleErrorResponses(responseString, stockCode))
                 .publishOn(Schedulers.fromExecutor(continueExecutor))
                 .map(this::getPriceSeries)
@@ -122,7 +115,7 @@ public class AlphaVantageClient implements PriceHistorySource, FinancialDataSour
     }
 
     private Mono<String> getPriceSeriesResponse(String stockCode, LocalDate fromDate) {
-        return getWebClient().get().uri(uriBuilder -> buildPriceHistoryUrl(stockCode, fromDate, uriBuilder))
+        return webClientProvider.next().get().uri(uriBuilder -> buildPriceHistoryUrl(stockCode, fromDate, uriBuilder))
                 .accept(APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(String.class);
@@ -145,14 +138,6 @@ public class AlphaVantageClient implements PriceHistorySource, FinancialDataSour
         return builder.build();
     }
 
-    private RateLimiter getRateLimiter() {
-        return rateLimiterRegistry.rateLimiter(AlphaVantageConfiguration.API);
-    }
-
-    private Mono<String> rateLimit(Mono<String> input) {
-        return input.doOnNext(v -> getRateLimiter().acquirePermission());
-    }
-
     private PriceDataItem toPriceDataModel(Map.Entry<LocalDate, PriceItem> localDatePriceItemEntry) {
         PriceDataModel.PriceDataModelBuilder modelBuilder = PriceDataModel.builder()
                 .setDate(localDatePriceItemEntry.getKey());
@@ -169,10 +154,4 @@ public class AlphaVantageClient implements PriceHistorySource, FinancialDataSour
                 .build();
     }
 
-    private WebClient getWebClient() {
-        if(null == webClient) {
-            webClient = webClientFactory.getWebClient();
-        }
-        return webClient;
-    }
 }

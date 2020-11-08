@@ -31,6 +31,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -70,7 +71,7 @@ public class PriceHistoryAggregatorIntegrationTest {
                         .build()))
                 .uriBuilderFactory(uriBuilderFactory)
                 .build();
-        when(webClientFactory.getWebClient()).thenReturn(webClient);
+        when(webClientFactory.getWebClient(any())).thenReturn(webClient);
     }
 
     @After

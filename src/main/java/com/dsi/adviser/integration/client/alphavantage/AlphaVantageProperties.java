@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import java.util.List;
 
 @Data
 @Validated
@@ -20,6 +22,6 @@ import javax.validation.constraints.NotBlank;
 public class AlphaVantageProperties {
     @NotBlank
     private String url;
-    @NotBlank
-    private String apiKey;
+    @NotEmpty
+    private List<String> apiKeys;
 }

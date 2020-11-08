@@ -20,7 +20,10 @@ app:
     alphavantage:
       enabled: true
       url: https://www.alphavantage.co/
-      apiKey: 86T2JAZAYN5Q24FS
+      apiKeys:
+        - 86T2JAZAYN5Q24FS
+        - SWFMVR675KNRWHWZ
+        - X6SWSXRN0FX65RIA
 
 rating:
   eligibility:

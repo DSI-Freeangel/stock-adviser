@@ -7,6 +7,7 @@ import com.dsi.adviser.integration.financialData.parser.FinancialDataParser;
 import com.dsi.adviser.integration.financialData.parser.FinancialParserProvider;
 import com.dsi.adviser.integration.financialData.parser.RawFinancialData;
 import com.dsi.adviser.integration.financialData.parser.alphavantage.AlphavantageFinancialData;
+import com.dsi.adviser.stock.RemoveStockService;
 import org.junit.Before;
 import org.junit.Test;
 import reactor.core.publisher.Mono;
@@ -45,13 +46,15 @@ public class FinancialDataProviderImplTest {
     private final FinancialDataRepository financialDataRepository = mock(FinancialDataRepository.class);
     private final FinancialParserProvider financialParserProvider = mock(FinancialParserProvider.class);
     private final FinancialDataParser financialDataParser = mock(FinancialDataParser.class);
-    private final FinancialDataProviderImpl financialDataProvider = new FinancialDataProviderImpl(dataSource, financialDataRepository, financialParserProvider);
+    private final RemoveStockService removeStockService = mock(RemoveStockService.class);
+    private final FinancialDataProviderImpl financialDataProvider = new FinancialDataProviderImpl(dataSource, financialDataRepository, financialParserProvider, removeStockService);
 
     @Before
     public void init() {
         when(financialParserProvider.getParser(any())).thenReturn(financialDataParser);
         when(financialDataParser.parse(any())).thenReturn(RAW_FINANCIAL_DATA);
         when(financialDataRepository.save(any())).then(i -> Mono.just(i.getArgument(0, FinancialDataEntity.class)));
+        when(removeStockService.removeByCode(any())).thenReturn(Mono.empty());
     }
 
     @Test

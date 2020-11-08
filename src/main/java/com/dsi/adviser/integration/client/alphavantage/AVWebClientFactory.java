@@ -16,19 +16,19 @@ public class AVWebClientFactory {
     private static final int BUFFER_SIZE = 20 * 1024 * 1024;
     private final AlphaVantageProperties properties;
 
-    public WebClient getWebClient() {
+    public WebClient getWebClient(String key) {
         return WebClient.builder()
                 .baseUrl(properties.getUrl())
                 .exchangeStrategies(ExchangeStrategies.builder()
                         .codecs(codec -> codec.defaultCodecs().maxInMemorySize(BUFFER_SIZE))
                         .build())
-                .defaultUriVariables(getDefaultUriVariables())
+                .defaultUriVariables(getDefaultUriVariables(key))
                 .build();
     }
 
-    private HashMap<String, Object> getDefaultUriVariables() {
+    private HashMap<String, Object> getDefaultUriVariables(String key) {
         HashMap<String, Object> map = new HashMap<>();
-        map.put(API_KEY_PARAM, properties.getApiKey());
+        map.put(API_KEY_PARAM, key);
         return map;
     }
 }
