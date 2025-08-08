@@ -1,6 +1,5 @@
 package com.dsi.adviser.price;
 
-import io.vavr.Predicates;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -35,7 +34,7 @@ public class PriceService {
         return dataFlux
                 .map(this::toTuples)
                 .collectList()
-                .filter(Predicates.not(CollectionUtils::isEmpty))
+                .filter(list -> !CollectionUtils.isEmpty(list))
                 .flatMap(repository::insertPriceEntity)
                 .thenMany(dataFlux);
     }

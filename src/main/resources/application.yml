@@ -2,7 +2,7 @@ spring:
   r2dbc:
     username: root
     password: admin
-    url: r2dbc:mysql://localhost:3306/adviser?serverTimezone=CST
+    url: r2dbc:mysql://localhost:3306/adviser?serverTimezone=America/Chicago
     pool:
       enabled: true
       initial-size: 10
@@ -11,7 +11,7 @@ spring:
   jpa:
     open-in-view: false
   liquibase:
-    url: jdbc:mysql://localhost:3306/adviser?serverTimezone=CST
+    url: jdbc:mysql://localhost:3306/adviser?serverTimezone=America/Chicago
     user: root
     password: admin
 

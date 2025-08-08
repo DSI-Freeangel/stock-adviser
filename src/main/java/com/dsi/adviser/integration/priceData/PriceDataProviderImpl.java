@@ -5,7 +5,6 @@ import com.dsi.adviser.integration.client.PriceHistorySource;
 import com.dsi.adviser.price.Period;
 import com.dsi.adviser.price.PriceData;
 import com.dsi.adviser.price.PriceModel;
-import io.vavr.Predicates;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -63,7 +62,7 @@ public class PriceDataProviderImpl implements PriceDataProvider {
                 .map(priceData -> toTuples(priceData, stockCode))
                 .window(1000)
                 .flatMap(Flux::collectList)
-                .filter(Predicates.not(CollectionUtils::isEmpty))
+                .filter(list -> !CollectionUtils.isEmpty(list))
                 .doOnNext((v) -> log.info("Going to save history for stock {}", stockCode))
                 .publishOn(Schedulers.fromExecutor(saveExecutor))
                 .flatMap(priceDataRepository::insertPriceDataEntities, 1, 1)

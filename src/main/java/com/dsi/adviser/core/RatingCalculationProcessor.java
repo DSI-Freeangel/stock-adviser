@@ -7,7 +7,6 @@ import com.dsi.adviser.rating.RatingModel;
 import com.dsi.adviser.rating.RatingService;
 import com.dsi.adviser.stock.Stock;
 import com.dsi.adviser.stock.StockService;
-import io.vavr.Predicates;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -56,7 +55,7 @@ public class RatingCalculationProcessor {
                 .doOnNext(stockStatistics -> log.info("Going to start calculation for #{} {}", processingCounter.incrementAndGet(), stockStatistics.getStockCode()))
                 .map(this::prepareCoefficients)
                 .collectList()
-                .filter(Predicates.not(CollectionUtils::isEmpty))
+                .filter(list -> !CollectionUtils.isEmpty(list))
                 .flatMapIterable(this::normalizeRatings)
                 .doOnNext(rating -> log.info("Going to save rating for #{} {}", persistCounter.incrementAndGet(), rating.getStockCode()))
                 .windowTimeout(1000, Duration.ofSeconds(1))
@@ -134,7 +133,7 @@ public class RatingCalculationProcessor {
                     .setApyGrown(apyGrownNormalized)
                     .setBeauty(beautyValue)
                     .build();
-        }).collect(Collectors.toList());
+        }).toList();
 
         return ratingModels.stream()
                 .map(ratingModel -> {

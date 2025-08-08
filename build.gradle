@@ -1,12 +1,13 @@
 plugins {
-    id 'org.springframework.boot' version '3.2.1'
-    id 'io.spring.dependency-management' version '1.1.4'
+    id 'org.springframework.boot' version '3.4.5'
+    id 'io.spring.dependency-management' version '1.1.6'
     id 'java'
 }
 
 group = 'com.dsi'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '17'
+sourceCompatibility = '21'
+targetCompatibility = '21'
 
 configurations {
     compileOnly {
@@ -25,7 +26,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'io.asyncer:r2dbc-mysql'
 //    implementation 'org.hibernate.validator:hibernate-validator'
-    implementation 'io.github.resilience4j:resilience4j-ratelimiter:1.5.0'
+    implementation 'io.github.resilience4j:resilience4j-spring-boot3:2.2.0'
 
     //Liquibase with own jdbc data source and driver
     implementation 'org.liquibase:liquibase-core'
