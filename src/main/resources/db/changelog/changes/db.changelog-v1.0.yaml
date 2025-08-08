@@ -47,20 +47,20 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                   name: ACTIVE
-                  type: TINYINT(1)
-                  defaultValue: 1
+                  type: BOOLEAN
+                  defaultValueBoolean: true
               - column:
                   constraints:
                     nullable: false
                   name: CREATED_DATE
                   type: TIMESTAMP
-                  defaultValue: NOW()
+                  defaultValueComputed: NOW()
               - column:
                   constraints:
                     nullable: false
                   name: UPDATED_DATE
                   type: TIMESTAMP
-                  defaultValue: NOW() ON UPDATE NOW()
+                  defaultValueComputed: NOW()
             tableName: STOCK
         - createIndex:
             columns:
@@ -120,13 +120,13 @@ databaseChangeLog:
                     nullable: false
                   name: CREATED_DATE
                   type: TIMESTAMP
-                  defaultValue: NOW()
+                  defaultValueComputed: NOW()
               - column:
                   constraints:
                     nullable: false
                   name: UPDATED_DATE
                   type: TIMESTAMP
-                  defaultValue: NOW() ON UPDATE NOW()
+                  defaultValueComputed: NOW()
             tableName: PRICE_DATA
         - createIndex:
             columns:
@@ -183,13 +183,13 @@ databaseChangeLog:
                     nullable: false
                   name: CREATED_DATE
                   type: TIMESTAMP
-                  defaultValue: NOW()
+                  defaultValueComputed: NOW()
               - column:
                   constraints:
                     nullable: false
                   name: UPDATED_DATE
                   type: TIMESTAMP
-                  defaultValue: NOW() ON UPDATE NOW()
+                  defaultValueComputed: NOW()
             tableName: PRICE
         - createIndex:
             columns:
@@ -232,19 +232,19 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                   name: JSON_RESPONSE
-                  type: MEDIUMTEXT
+                  type: TEXT
               - column:
                   constraints:
                     nullable: false
                   name: CREATED_DATE
                   type: TIMESTAMP
-                  defaultValue: NOW()
+                  defaultValueComputed: NOW()
               - column:
                   constraints:
                     nullable: false
                   name: UPDATED_DATE
                   type: TIMESTAMP
-                  defaultValue: NOW() ON UPDATE NOW()
+                  defaultValueComputed: NOW()
             tableName: FINANCIAL_DATA
         - createIndex:
             columns:
@@ -304,13 +304,13 @@ databaseChangeLog:
                     nullable: false
                   name: CREATED_DATE
                   type: TIMESTAMP
-                  defaultValue: NOW()
+                  defaultValueComputed: NOW()
               - column:
                   constraints:
                     nullable: false
                   name: UPDATED_DATE
                   type: TIMESTAMP
-                  defaultValue: NOW() ON UPDATE NOW()
+                  defaultValueComputed: NOW()
             tableName: FINANCIAL
         - createIndex:
             columns:
@@ -370,13 +370,13 @@ databaseChangeLog:
                     nullable: false
                   name: CREATED_DATE
                   type: TIMESTAMP
-                  defaultValue: NOW()
+                  defaultValueComputed: NOW()
               - column:
                   constraints:
                     nullable: false
                   name: UPDATED_DATE
                   type: TIMESTAMP
-                  defaultValue: NOW() ON UPDATE NOW()
+                  defaultValueComputed: NOW()
             tableName: RATING
         - createIndex:
             columns:

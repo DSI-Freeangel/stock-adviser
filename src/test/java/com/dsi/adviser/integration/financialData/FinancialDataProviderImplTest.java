@@ -8,8 +8,8 @@ import com.dsi.adviser.integration.financialData.parser.FinancialParserProvider;
 import com.dsi.adviser.integration.financialData.parser.RawFinancialData;
 import com.dsi.adviser.integration.financialData.parser.alphavantage.AlphavantageFinancialData;
 import com.dsi.adviser.stock.RemoveStockService;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -49,7 +49,7 @@ public class FinancialDataProviderImplTest {
     private final RemoveStockService removeStockService = mock(RemoveStockService.class);
     private final FinancialDataProviderImpl financialDataProvider = new FinancialDataProviderImpl(dataSource, financialDataRepository, financialParserProvider, removeStockService);
 
-    @Before
+    @BeforeEach
     public void init() {
         when(financialParserProvider.getParser(any())).thenReturn(financialDataParser);
         when(financialDataParser.parse(any())).thenReturn(RAW_FINANCIAL_DATA);

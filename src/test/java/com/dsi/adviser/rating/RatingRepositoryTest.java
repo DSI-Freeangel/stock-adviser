@@ -1,12 +1,11 @@
 package com.dsi.adviser.rating;
 
-import org.junit.After;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.r2dbc.DataR2dbcTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -14,7 +13,7 @@ import java.time.LocalDate;
 
 @DataR2dbcTest
 @ActiveProfiles("test")
-@RunWith(SpringRunner.class)
+@SpringJUnitConfig
 public class RatingRepositoryTest {
 
     public static final RatingEntity RATING_ENTITY = RatingEntity.builder()
@@ -29,7 +28,7 @@ public class RatingRepositoryTest {
     @Autowired
     private RatingRepository ratingRepository;
 
-    @After
+    @AfterEach
     public void tearDown() {
         ratingRepository.deleteAll().block();
         System.out.println("RatingRepository is clear!!!");

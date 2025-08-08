@@ -6,16 +6,15 @@ import com.dsi.adviser.price.Period;
 import com.dsi.adviser.price.PriceEntity;
 import com.dsi.adviser.price.PriceRepository;
 import lombok.SneakyThrows;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.util.StopWatch;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
@@ -30,13 +29,13 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.HashMap;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@RunWith(SpringRunner.class)
+@SpringJUnitConfig
 public class PriceHistoryAggregatorIntegrationTest {
     private static final int BUFFER_SIZE = 20 * 1024 * 1024;
     private static final String STOCK_CODE = "IBM";
@@ -54,7 +53,7 @@ public class PriceHistoryAggregatorIntegrationTest {
     @MockBean
     private AVWebClientFactory webClientFactory;
 
-    @Before
+    @BeforeEach
     @SneakyThrows
     public void init() {
         String responseString = new String(Files.readAllBytes(Paths.get(getClass().getResource("stock-prices-response.json").toURI())));
@@ -74,7 +73,7 @@ public class PriceHistoryAggregatorIntegrationTest {
         when(webClientFactory.getWebClient(any())).thenReturn(webClient);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         priceRepository.deleteAll().block();
         System.out.println("PriceRepository clean!");

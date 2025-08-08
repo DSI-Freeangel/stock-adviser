@@ -5,8 +5,8 @@ import com.dsi.adviser.integration.client.PriceDataModel;
 import com.dsi.adviser.integration.client.PriceHistorySource;
 import com.dsi.adviser.price.Period;
 import com.dsi.adviser.price.PriceData;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -28,7 +28,7 @@ public class PriceDataProviderImplTest {
     private final PriceDataRepository priceDataRepository = mock(PriceDataRepository.class);
     private final PriceDataProvider priceDataProvider = new PriceDataProviderImpl(priceDataRepository, priceHistorySource);
 
-    @Before
+    @BeforeEach
     public void init() {
         when(priceDataRepository.insertPriceDataEntities(any())).thenReturn(Mono.empty());
     }

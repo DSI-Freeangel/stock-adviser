@@ -5,9 +5,9 @@ import com.dsi.adviser.price.Period;
 import com.dsi.adviser.price.PriceData;
 import com.dsi.adviser.price.PriceModel;
 import com.dsi.adviser.price.PriceService;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -27,13 +27,13 @@ public class PriceHistoryAggregatorReactorTest {
     private final PriceDataProvider priceDataProvider = mock(PriceDataProvider.class);
     private final PriceHistoryAggregatorReactor priceHistoryAggregator = new PriceHistoryAggregatorReactor(priceService, priceDataProvider);
 
-    @Before
+    @BeforeEach
     public void init() {
         when(priceService.saveAll(any())).then(i -> i.getArgument(0, Flux.class));
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void aggregatePrices() {
         LocalDate lastDate = LocalDate.of(2019, 8, 17);
         LocalDate currentDate = LocalDate.of(2020, 8, 14);

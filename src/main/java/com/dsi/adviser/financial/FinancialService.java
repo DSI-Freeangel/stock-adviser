@@ -1,6 +1,5 @@
 package com.dsi.adviser.financial;
 
-import com.sun.istack.internal.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -15,7 +14,7 @@ import java.time.LocalDateTime;
 public class FinancialService {
     private final FinancialRepository financialRepository;
 
-    public Mono<FinancialData> findOneByStockCode(@NotNull String stockCode) {
+    public Mono<FinancialData> findOneByStockCode(String stockCode) {
         return financialRepository.findOneByStockCodeEquals(stockCode)
                 .map(this::toModel);
     }

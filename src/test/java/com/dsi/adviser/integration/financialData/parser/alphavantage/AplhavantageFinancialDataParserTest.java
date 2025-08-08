@@ -2,14 +2,14 @@ package com.dsi.adviser.integration.financialData.parser.alphavantage;
 
 import com.dsi.adviser.integration.financialData.parser.RawFinancialData;
 import lombok.SneakyThrows;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AplhavantageFinancialDataParserTest {
 

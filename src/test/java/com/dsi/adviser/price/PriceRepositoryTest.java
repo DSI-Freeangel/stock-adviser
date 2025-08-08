@@ -1,12 +1,11 @@
 package com.dsi.adviser.price;
 
-import org.junit.After;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.r2dbc.DataR2dbcTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
@@ -16,7 +15,7 @@ import java.util.List;
 
 @DataR2dbcTest
 @ActiveProfiles("test")
-@RunWith(SpringRunner.class)
+@SpringJUnitConfig
 public class PriceRepositoryTest {
     private static final String STOCK_CODE = "IBM";
     private static final double PRICE = 20.0;
@@ -26,7 +25,7 @@ public class PriceRepositoryTest {
     @Autowired
     private PriceRepository repository;
 
-    @After
+    @AfterEach
     public void tearDown() {
         repository.deleteAll().block();
         System.out.println("PriceRepository clean!");

@@ -9,8 +9,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.github.resilience4j.ratelimiter.RateLimiterConfig;
 import io.github.resilience4j.ratelimiter.internal.InMemoryRateLimiterRegistry;
 import org.assertj.core.util.Lists;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -36,7 +36,7 @@ public class AlphaVantageClientTest {
 
     private final AlphaVantageClient client = new AlphaVantageClient(webClientProvider, removeStockService,  MAPPER);
 
-    @Before
+    @BeforeEach
     public void setUp() {
         rateLimiterRegistry.rateLimiter(KEY, RateLimiterConfig.custom()
                 .limitRefreshPeriod(Duration.ofMinutes(1))

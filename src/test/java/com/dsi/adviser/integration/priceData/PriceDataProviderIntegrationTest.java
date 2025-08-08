@@ -2,24 +2,23 @@ package com.dsi.adviser.integration.priceData;
 
 import com.dsi.adviser.price.Period;
 import com.dsi.adviser.price.PriceData;
-import org.junit.After;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
 import java.time.LocalDate;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-@RunWith(SpringRunner.class)
+@SpringJUnitConfig
 @ActiveProfiles("test")
 public class PriceDataProviderIntegrationTest {
     private static final String STOCK_CODE = "IBM";
@@ -30,7 +29,7 @@ public class PriceDataProviderIntegrationTest {
     @Autowired
     private PriceDataProvider priceDataProvider;
 
-    @After
+    @AfterEach
     public void init() {
         priceDataRepository.deleteAll().block();
         System.out.println("PriceDataRepository clean!");
