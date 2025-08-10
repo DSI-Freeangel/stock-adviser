@@ -1,0 +1,34 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-market-cap-to-stock
+      author: IM
+      changes:
+        - addColumn:
+            tableName: STOCK
+            columns:
+              - column:
+                  name: MARKET_CAPITALIZATION
+                  type: DECIMAL(17,2)
+                  constraints:
+                    nullable: true
+
+  - changeSet:
+      id: copy-market-cap-from-financial-to-stock
+      author: IM
+      changes:
+        - sql:
+            sql: >
+              UPDATE STOCK 
+              SET MARKET_CAPITALIZATION = (
+                SELECT f.MARKET_CAPITALIZATION 
+                FROM FINANCIAL f 
+                WHERE f.STOCK_CODE = STOCK.CODE 
+                AND f.MARKET_CAPITALIZATION IS NOT NULL
+                LIMIT 1
+              )
+              WHERE EXISTS (
+                SELECT 1 
+                FROM FINANCIAL f 
+                WHERE f.STOCK_CODE = STOCK.CODE 
+                AND f.MARKET_CAPITALIZATION IS NOT NULL
+              )
